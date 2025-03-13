@@ -11,12 +11,16 @@ namespace Hexfall.Level
         [SerializeField] private LevelProperties levelProperties;
 
         private GridSpawner gridSpawner;
+        private GridChecker gridChecker;
 
         public void Initialize(HexagonProperties hexagonProperties, Transform hexagonParent)
         {
             cameraController.Initialize(levelProperties, hexagonProperties);
             gridSpawner = new GridSpawner();
-            gridSpawner.Initialize(levelProperties, hexagonProperties, hexagonParent);
+            gridChecker = new GridChecker();
+            gridSpawner.Initialize(gridChecker, levelProperties, hexagonProperties, hexagonParent);
+
+            gridChecker.CheckAllGrid();
         }
     }
 }

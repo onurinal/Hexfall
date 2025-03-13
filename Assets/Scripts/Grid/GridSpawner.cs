@@ -12,7 +12,10 @@ namespace Hexfall.Grid
 
         private int gridWidth, gridHeight;
 
-        public void Initialize(LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent)
+        // for testing
+        private ManualGrid manualGrid;
+
+        public void Initialize(GridChecker gridChecker, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent)
         {
             this.hexagonProperties = hexagonProperties;
             this.hexagonParent = hexagonParent;
@@ -21,7 +24,19 @@ namespace Hexfall.Grid
             gridHeight = levelProperties.GridHeight;
 
             CreateNewGrid();
-            CreateHexagonsToNewGrid();
+
+            // for testing
+            manualGrid = new ManualGrid();
+            if (manualGrid.IsTesting)
+            {
+                manualGrid.Initialize(hexagonGrid, hexagonProperties, this);
+            }
+            else
+            {
+                CreateHexagonsToNewGrid();
+            }
+
+            gridChecker.Initialize(hexagonGrid, levelProperties);
         }
 
         private void CreateNewGrid()
@@ -41,7 +56,7 @@ namespace Hexfall.Grid
             }
         }
 
-        private Vector2 GetHexagonWorldPosition(int width, int height)
+        public Vector2 GetHexagonWorldPosition(int width, int height)
         {
             var positionX = (hexagonProperties.ScaleFactorX * width);
             var positionY = width % 2 == 0 ? (hexagonProperties.ScaleFactorY * 2 * height) + hexagonProperties.ScaleFactorY : hexagonProperties.ScaleFactorY * 2 * height;

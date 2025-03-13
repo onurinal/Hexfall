@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -7,10 +8,12 @@ namespace Hexfall.Hex
     public class Hexagon : MonoBehaviour
     {
         [SerializeField] private HexagonProperties hexagonProperties;
-        [SerializeField] private HexagonType hexagonType;
         [SerializeField] private SpriteRenderer hexSprite;
+        [field: SerializeField] public HexagonType HexagonType { get; private set; }
         [field: SerializeField] public int IndexX { get; private set; }
         [field: SerializeField] public int IndexY { get; private set; }
+
+        [SerializeField] private TextMeshProUGUI indexText;
 
         private void Awake()
         {
@@ -23,7 +26,42 @@ namespace Hexfall.Hex
             IndexX = indexX;
             IndexY = indexY;
 
-            hexagonType = (HexagonType)Random.Range(0, Enum.GetNames(typeof(HexagonType)).Length);
+            indexText.transform.position = hexSprite.bounds.center;
+            indexText.text = IndexX + "," + IndexY;
+
+            HexagonType = (HexagonType)Random.Range(0, Enum.GetNames(typeof(HexagonType)).Length);
+
+            switch (HexagonType)
+            {
+                case HexagonType.Red:
+                    hexSprite.color = Color.red;
+                    break;
+                case HexagonType.Yellow:
+                    hexSprite.color = Color.yellow;
+                    break;
+                case HexagonType.Blue:
+                    hexSprite.color = Color.blue;
+                    break;
+                case HexagonType.Purple:
+                    hexSprite.color = Color.magenta;
+                    break;
+                case HexagonType.Green:
+                    hexSprite.color = Color.green;
+                    break;
+                case HexagonType.Cyan:
+                    hexSprite.color = Color.cyan;
+                    break;
+            }
+        }
+
+        public void InitializeForTest(int indexX, int indexY, HexagonType hexagonType)
+        {
+            IndexX = indexX;
+            IndexY = indexY;
+            HexagonType = hexagonType;
+
+            indexText.transform.position = hexSprite.bounds.center;
+            indexText.text = IndexX + "," + IndexY;
 
             switch (hexagonType)
             {
@@ -42,6 +80,9 @@ namespace Hexfall.Hex
                 case HexagonType.Green:
                     hexSprite.color = Color.green;
                     break;
+                case HexagonType.Cyan:
+                    hexSprite.color = Color.cyan;
+                    break;
             }
         }
 
@@ -50,6 +91,11 @@ namespace Hexfall.Hex
             var scaleFactorX = hexagonProperties.ScaleFactorX * GetComponentInChildren<Transform>().localScale.x;
             var scaleFactorY = hexagonProperties.ScaleFactorY * GetComponentInChildren<Transform>().localScale.y;
             hexagonProperties.SetScaleFactorX(scaleFactorX, scaleFactorY);
+        }
+
+        public void DestroyHexagon()
+        {
+            Destroy(gameObject);
         }
     }
 }
