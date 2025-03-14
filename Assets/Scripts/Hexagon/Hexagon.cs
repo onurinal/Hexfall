@@ -2,6 +2,8 @@
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using DG.Tweening;
+using UnityEngine.UIElements.Experimental;
 
 namespace Hexfall.Hex
 {
@@ -15,10 +17,17 @@ namespace Hexfall.Hex
 
         [SerializeField] private TextMeshProUGUI indexText;
 
+        private Tween moveTween;
+
         private void Awake()
         {
             // to calculate scaleFactor and world positions of hex if the hexagon scale change
             UpdateScaleFactor();
+        }
+
+        private void OnDestroy()
+        {
+            moveTween?.Kill();
         }
 
         public void Initialize(int indexX, int indexY)
@@ -26,8 +35,7 @@ namespace Hexfall.Hex
             IndexX = indexX;
             IndexY = indexY;
 
-            indexText.transform.position = hexSprite.bounds.center;
-            indexText.text = IndexX + "," + IndexY;
+            UpdateIndexText();
 
             HexagonType = (HexagonType)Random.Range(0, Enum.GetNames(typeof(HexagonType)).Length);
 
@@ -56,12 +64,10 @@ namespace Hexfall.Hex
 
         public void InitializeForTest(int indexX, int indexY, HexagonType hexagonType)
         {
-            IndexX = indexX;
-            IndexY = indexY;
+            SetIndices(indexX, indexY);
             HexagonType = hexagonType;
 
-            indexText.transform.position = hexSprite.bounds.center;
-            indexText.text = IndexX + "," + IndexY;
+            UpdateIndexText();
 
             switch (hexagonType)
             {
@@ -86,6 +92,22 @@ namespace Hexfall.Hex
             }
         }
 
+        public void UpdateIndexText()
+        {
+            indexText.transform.position = hexSprite.bounds.center;
+            indexText.text = IndexX + "," + IndexY;
+        }
+
+        public void Move(Vector2 targetPosition)
+        {
+            transform.DOMove(targetPosition, hexagonProperties.MoveDuration).SetEase(Ease.InSine);
+        }
+
+        public void MoveWithNoDelay(Vector2 targetPosition)
+        {
+            transform.position = targetPosition;
+        }
+
         private void UpdateScaleFactor()
         {
             var scaleFactorX = hexagonProperties.ScaleFactorX * GetComponentInChildren<Transform>().localScale.x;
@@ -95,7 +117,23 @@ namespace Hexfall.Hex
 
         public void DestroyHexagon()
         {
-            Destroy(gameObject);
+            transform.DOScale(new Vector2(0f, 0f), hexagonProperties.DestroyDuration).SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
+        }
+
+        public void HideHexagon()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void ShowHexagon()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void SetIndices(int indexX, int indexY)
+        {
+            IndexX = indexX;
+            IndexY = indexY;
         }
     }
 }

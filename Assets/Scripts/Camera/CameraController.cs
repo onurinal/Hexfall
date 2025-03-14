@@ -23,5 +23,19 @@ namespace Hexfall.CameraManager
 
             transform.position = new Vector3(newPositionX, newPositionY, transform.position.z);
         }
+
+        // to find world position of top left of the screen
+        public Vector3 GetTopLeftWorldPosition()
+        {
+            var mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                Debug.LogWarning("No main camera found.");
+                return Vector3.zero;
+            }
+
+            var topLeftPosition = mainCamera.ViewportToWorldPoint(new Vector3(0, 1, transform.position.z));
+            return topLeftPosition;
+        }
     }
 }

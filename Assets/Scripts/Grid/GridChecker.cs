@@ -100,7 +100,6 @@ namespace Hexfall.Grid
                         foreach (var hexagon in tempMatchList)
                         {
                             AddHexagonInMatchList(hexagon);
-                            Debug.Log($"HexagonType: {hexagon.HexagonType}, X: {hexagon.IndexX}, Y: {hexagon.IndexY}, Direction: {direction}");
                         }
 
                         return;
@@ -132,6 +131,26 @@ namespace Hexfall.Grid
             {
                 tempMatchList.Add(hexagon);
             }
+        }
+
+        public void DestroyHexagonInMatchList()
+        {
+            if (matchList == null) return;
+
+            foreach (var hexagon in matchList)
+            {
+                if (hexagon == null) return;
+
+                hexagon.DestroyHexagon();
+                hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
+            }
+
+            matchList.Clear();
+        }
+
+        public int GetMatchListCount()
+        {
+            return matchList.Count;
         }
     }
 }
