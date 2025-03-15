@@ -11,6 +11,7 @@ namespace Hexfall.Hex
     {
         [SerializeField] private HexagonProperties hexagonProperties;
         [SerializeField] private SpriteRenderer hexSprite;
+        [SerializeField] private BoxCollider2D myCollider;
         [field: SerializeField] public HexagonType HexagonType { get; private set; }
         [field: SerializeField] public int IndexX { get; private set; }
         [field: SerializeField] public int IndexY { get; private set; }
@@ -134,6 +135,11 @@ namespace Hexfall.Hex
         {
             IndexX = indexX;
             IndexY = indexY;
+        }
+
+        public Vector2 GetColliderBoundsSize()
+        {
+            return new Vector2(myCollider.bounds.size.x, myCollider.bounds.size.y);
         }
     }
 }

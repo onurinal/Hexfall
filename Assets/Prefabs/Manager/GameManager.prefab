@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cecfe6b2812f4227825e9e2d096d1df3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelManager: {fileID: 0}
   hexagonProperties: {fileID: 11400000, guid: 7f7ff7029a70c514e8b0492a76b2a107, type: 2}
   hexagonParent: {fileID: 0}

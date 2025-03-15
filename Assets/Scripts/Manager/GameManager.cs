@@ -1,19 +1,22 @@
-﻿using Hexfall.CameraManager;
+﻿using UnityEngine;
 using Hexfall.Hex;
-using UnityEngine;
 using Hexfall.Level;
+using Hexfall.Player;
+using Hexfall.CameraManager;
 
 namespace Hexfall.Manager
 {
     public class GameManager : MonoBehaviour
     {
+        [SerializeField] private CameraController cameraController;
+        [SerializeField] private PlayerController playerController;
         [SerializeField] private LevelManager levelManager;
         [SerializeField] private HexagonProperties hexagonProperties;
         [SerializeField] private Transform hexagonParent;
 
         private void Start()
         {
-            levelManager.Initialize(hexagonProperties, hexagonParent);
+            levelManager.Initialize(cameraController, playerController, hexagonProperties, hexagonParent);
         }
     }
 }

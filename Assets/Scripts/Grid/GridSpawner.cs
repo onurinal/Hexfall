@@ -71,6 +71,13 @@ namespace Hexfall.Grid
             return new Vector2(positionX, positionY);
         }
 
+        public Hexagon GetHexagonObject(int width, int height)
+        {
+            if (hexagonGrid[width, height] == null) return null;
+
+            return hexagonGrid[width, height];
+        }
+
         private Hexagon CreateNewHexagon(int width, int height, Vector2 position)
         {
             var hexagon = Object.Instantiate(hexagonProperties.HexagonPrefab, position, Quaternion.identity, hexagonParent);
