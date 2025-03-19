@@ -15,7 +15,7 @@ namespace Hexfall.Player
         private Hexagon selectedHexagon;
         private bool isHexagonSelected = false;
 
-        private readonly Vector2Int[][] neighbourOffsets = new Vector2Int[][]
+        private Vector2Int[][] neighbourOffsets = new Vector2Int[][]
         {
             new Vector2Int[] { new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, 0), new(1, 1), }, // for even rows
             new Vector2Int[] { new(-1, -1), new(-1, 0), new(0, -1), new(0, 1), new(1, 0), new(1, -1), } // for odd rows
@@ -117,10 +117,11 @@ namespace Hexfall.Player
             var neighbours = GetValidNeighbourHexagons(selectedHexagon.IndexX, selectedHexagon.IndexY);
             if (neighbours.Count < 2) return;
 
-            var closestTwoHexagons = GetClosestNeighbour(neighbours, inputAngle);
+            // var closestTwoHexagons = GetClosestNeighbour(neighbours, inputAngle);
+            var (secondHexAxis, thirdHexAxis) = GetClosestNeighbour(neighbours, inputAngle);
 
-            var secondHex = gridSpawner.GetHexagonObject(closestTwoHexagons[0].x, closestTwoHexagons[0].y);
-            var thirdHex = gridSpawner.GetHexagonObject(closestTwoHexagons[1].x, closestTwoHexagons[1].y);
+            var secondHex = gridSpawner.GetHexagonObject(secondHexAxis.x, secondHexAxis.y);
+            var thirdHex = gridSpawner.GetHexagonObject(thirdHexAxis.x, thirdHexAxis.y);
 
             Debug.Log($"First Hex: {selectedHexagon.IndexX}, {selectedHexagon.IndexY} Second Hex: {secondHex.IndexX}, {secondHex.IndexY} Third Hex: {thirdHex.IndexX}, {thirdHex.IndexY} ");
         }
@@ -147,12 +148,13 @@ namespace Hexfall.Player
             return hexagon.x >= 0 && hexagon.y >= 0 && hexagon.x < gridWidth && hexagon.y < gridHeight;
         }
 
-        private Vector2Int[] GetClosestNeighbour(List<Vector2Int> neighbours, float inputAngle)
+        private (Vector2Int, Vector2Int) GetClosestNeighbour(List<Vector2Int> neighbours, float inputAngle)
         {
             Vector2Int closest1 = Vector2Int.zero, closest2 = Vector2Int.zero;
             float minDiff = float.MaxValue, minDiff2 = float.MaxValue;
             var selectedHexPos = selectedHexagon.transform.position;
 
+            // Find the closest hexagon to the input angle
             foreach (var neighbour in neighbours)
             {
                 var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
@@ -170,31 +172,30 @@ namespace Hexfall.Player
 
             var closest1Neighbours = GetValidNeighbourHexagons(closest1.x, closest1.y);
 
+            // Find the second-closest hexagon that is also a neighbor of the first closest hex
             foreach (var neighbour in neighbours)
             {
-                if (closest1Neighbours.Contains(neighbour))
-                {
-                    var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
-                    var targetAngle = GetAngle(selectedHexPos, targetPosition);
-                    var angleDiff = Mathf.Abs(Mathf.DeltaAngle(inputAngle, targetAngle));
+                if (!closest1Neighbours.Contains(neighbour)) continue;
 
-                    if (angleDiff < minDiff2)
-                    {
-                        minDiff2 = angleDiff;
-                        closest2 = neighbour;
-                    }
+                var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
+                var angle = GetAngle(selectedHexPos, targetPosition);
+                var angleDiff = Mathf.Abs(Mathf.DeltaAngle(inputAngle, angle));
+
+                if (angleDiff < minDiff2)
+                {
+                    minDiff2 = angleDiff;
+                    closest2 = neighbour;
                 }
             }
 
-            return new Vector2Int[] { closest1, closest2 };
+            return (closest1, closest2);
         }
 
         private float GetAngle(Vector2 center, Vector2 target)
         {
             Vector2 diff = new Vector2(target.x - center.x, target.y - center.y);
             float angle = Mathf.Atan2(diff.x, diff.y) * Mathf.Rad2Deg;
-            if (angle < 0) angle += 360;
-            return angle;
+            return (angle < 0) ? angle + 360 : angle;
         }
     }
 }
