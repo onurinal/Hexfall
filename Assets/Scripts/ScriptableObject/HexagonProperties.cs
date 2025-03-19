@@ -12,8 +12,8 @@ namespace Hexfall.Hex
         [SerializeField] private float destroyDuration;
 
         [field: Tooltip("To calculate world position of the hexagon")]
-        [field: SerializeField] public float ScaleFactorX { get; private set; } = 0.475f;
-        [field: SerializeField] public float ScaleFactorY { get; private set; } = 0.275f;
+        [field: SerializeField] public float ScaleFactorX { get; private set; } = 0.48f;
+        [field: SerializeField] public float ScaleFactorY { get; private set; } = 0.32f;
 
         public Hexagon HexagonPrefab => hexagonPrefab;
         public float MoveDuration => moveDuration;

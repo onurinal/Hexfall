@@ -1,5 +1,7 @@
-﻿using Hexfall.Grid;
+﻿using System.Collections.Generic;
+using Hexfall.Grid;
 using Hexfall.Hex;
+using Hexfall.Level;
 using UnityEngine;
 
 namespace Hexfall.Player
@@ -9,13 +11,23 @@ namespace Hexfall.Player
         [SerializeField] private PlayerInput playerInput;
         private GridSpawner gridSpawner;
 
+        private int gridWidth, gridHeight;
         private Hexagon selectedHexagon;
         private bool isHexagonSelected = false;
 
-        public void Initialize(GridSpawner gridSpawner)
+        private readonly Vector2Int[][] neighbourOffsets = new Vector2Int[][]
+        {
+            new Vector2Int[] { new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, 0), new(1, 1), }, // for even rows
+            new Vector2Int[] { new(-1, -1), new(-1, 0), new(0, -1), new(0, 1), new(1, 0), new(1, -1), } // for odd rows
+        };
+
+        public void Initialize(GridSpawner gridSpawner, LevelProperties levelProperties)
         {
             playerInput.Initialize();
             this.gridSpawner = gridSpawner;
+
+            gridWidth = levelProperties.GridWidth;
+            gridHeight = levelProperties.GridHeight;
         }
 
         private void Update()
@@ -36,7 +48,7 @@ namespace Hexfall.Player
 
                     if (selectedHexagon)
                     {
-                        Debug.Log($"Selected Hexagon Type: {selectedHexagon.HexagonType}, IndexX : {selectedHexagon.IndexX}, IndexY : {selectedHexagon.IndexY}");
+                        // Debug.Log($"Selected Hexagon Type: {selectedHexagon.HexagonType}, IndexX : {selectedHexagon.IndexX}, IndexY : {selectedHexagon.IndexY}");
                     }
                 }
             }
@@ -54,7 +66,7 @@ namespace Hexfall.Player
             {
                 if (selectedHexagon != null)
                 {
-                    Debug.Log($"Still selecting Hexagon Type: {selectedHexagon.HexagonType}, IndexX : {selectedHexagon.IndexX}, IndexY : {selectedHexagon.IndexY}");
+                    // Debug.Log($"Still selecting Hexagon Type: {selectedHexagon.HexagonType}, IndexX : {selectedHexagon.IndexX}, IndexY : {selectedHexagon.IndexY}");
                     return playerInput.CurrentMousePosition;
                 }
             }
@@ -91,57 +103,98 @@ namespace Hexfall.Player
 
             // a box collider was placed inside the hexagon. The box collider was divided into 8 parts and these parts are in the shape of triangles
             // to find the center position of this user input, we need collider bound size and divide this variable by 2
-            var hexCenter = selectedHexagon.transform.position;
-            var halfColliderSizeX = selectedHexagon.GetColliderBoundsSize().x / 2f;
-            var halfColliderSizeY = selectedHexagon.GetColliderBoundsSize().y / 2f;
+            Vector2 hexCenter = selectedHexagon.transform.position;
+            var angle = GetAngle(hexCenter, inputPosition);
+            Debug.Log($"selected angle: {angle}");
 
-            var isRight = inputPosition.x > hexCenter.x;
-            var isAbove = inputPosition.y > hexCenter.y;
-
-            var offsetX = Mathf.Abs(inputPosition.x - hexCenter.x) / halfColliderSizeX;
-            var centerPointY = isAbove ? (offsetX * halfColliderSizeY) + hexCenter.y : hexCenter.y - (offsetX * halfColliderSizeY);
-
-            CalculateOtherTwoHexagons(inputPosition.y, centerPointY, isAbove, isRight);
+            CalculateOtherTwoHexagons(angle);
         }
 
-        private void CalculateOtherTwoHexagons(float inputY, float centerPointY, bool isAbove, bool isRight)
+        private void CalculateOtherTwoHexagons(float inputAngle)
         {
-            var firstX = selectedHexagon.IndexX;
-            var firstY = selectedHexagon.IndexY;
+            Vector2 hexCenter = selectedHexagon.transform.position;
 
-            Vector2 secondHex, thirdHex;
+            var neighbours = GetValidNeighbourHexagons(selectedHexagon.IndexX, selectedHexagon.IndexY);
+            if (neighbours.Count < 2) return;
 
-            if (isAbove && isRight) // top right area of the hexagon
-            {
-                secondHex = inputY > centerPointY ? new Vector2(firstX, firstY + 1) : new Vector2(firstX + 1, firstY);
-                thirdHex = inputY > centerPointY ? new Vector2(firstX + 1, firstY) : new Vector2(firstX + 1, firstY - 1);
-            }
-            else if (!isAbove && isRight) // bottom right area of the hexagon
-            {
-                secondHex = inputY > centerPointY ? new Vector2(firstX + 1, firstY) : new Vector2(firstX + 1, firstY - 1);
-                thirdHex = inputY > centerPointY ? new Vector2(firstX + 1, firstY - 1) : new Vector2(firstX, firstY - 1);
-            }
-            else if (!isAbove) // bottom left area of the hexagon
-            {
-                secondHex = new Vector2(firstX - 1, firstY - 1);
-                thirdHex = inputY > centerPointY ? new Vector2(firstX - 1, firstY) : new Vector2(firstX, firstY - 1);
-            }
-            // top left area of the hexagon
-            else
-            {
-                secondHex = inputY > centerPointY ? new Vector2(firstX - 1, firstY) : new Vector2(firstX - 1, firstY - 1);
-                thirdHex = inputY > centerPointY ? new Vector2(firstX, firstY + 1) : new Vector2(firstX - 1, firstY);
-            }
+            var closestTwoHexagons = GetClosestNeighbour(neighbours, inputAngle);
 
-            SelectOtherTwoHexagons(secondHex, thirdHex);
+            var secondHex = gridSpawner.GetHexagonObject(closestTwoHexagons[0].x, closestTwoHexagons[0].y);
+            var thirdHex = gridSpawner.GetHexagonObject(closestTwoHexagons[1].x, closestTwoHexagons[1].y);
+
+            Debug.Log($"First Hex: {selectedHexagon.IndexX}, {selectedHexagon.IndexY} Second Hex: {secondHex.IndexX}, {secondHex.IndexY} Third Hex: {thirdHex.IndexX}, {thirdHex.IndexY} ");
         }
 
-        private void SelectOtherTwoHexagons(Vector2 secondHex, Vector2 thirdHex)
+        private List<Vector2Int> GetValidNeighbourHexagons(int indexX, int indexY)
         {
-            var secondHexagon = gridSpawner.GetHexagonObject((int)secondHex.x, (int)secondHex.y);
-            var thirdHexagon = gridSpawner.GetHexagonObject((int)thirdHex.x, (int)thirdHex.y);
-            Debug.Log($"secondHexagonType {secondHexagon.HexagonType}, secondX {secondHexagon.IndexX}, secondY {secondHexagon.IndexY}");
-            Debug.Log($"threeHexagonType {thirdHexagon.HexagonType} thirdX {thirdHexagon.IndexX}, thirdY {thirdHexagon.IndexY}");
+            List<Vector2Int> validNeighbours = new List<Vector2Int>();
+            int rowType = indexX % 2; // 0 for even, 1 for odd
+
+            foreach (var offset in neighbourOffsets[rowType])
+            {
+                Vector2Int neighbour = new Vector2Int(indexX + offset.x, indexY + offset.y);
+                if (IsValidHexagon(neighbour))
+                {
+                    validNeighbours.Add(neighbour);
+                }
+            }
+
+            return validNeighbours;
+        }
+
+        private bool IsValidHexagon(Vector2Int hexagon)
+        {
+            return hexagon.x >= 0 && hexagon.y >= 0 && hexagon.x < gridWidth && hexagon.y < gridHeight;
+        }
+
+        private Vector2Int[] GetClosestNeighbour(List<Vector2Int> neighbours, float inputAngle)
+        {
+            Vector2Int closest1 = Vector2Int.zero, closest2 = Vector2Int.zero;
+            float minDiff = float.MaxValue, minDiff2 = float.MaxValue;
+            var selectedHexPos = selectedHexagon.transform.position;
+
+            foreach (var neighbour in neighbours)
+            {
+                var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
+                var angle = GetAngle(selectedHexPos, targetPosition);
+                var angleDiff = Mathf.Abs(Mathf.DeltaAngle(inputAngle, angle));
+
+                if (angleDiff < minDiff) // new closest one
+                {
+                    minDiff = angleDiff;
+                    closest1 = neighbour;
+                }
+            }
+
+            neighbours.Remove(closest1);
+
+            var closest1Neighbours = GetValidNeighbourHexagons(closest1.x, closest1.y);
+
+            foreach (var neighbour in neighbours)
+            {
+                if (closest1Neighbours.Contains(neighbour))
+                {
+                    var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
+                    var targetAngle = GetAngle(selectedHexPos, targetPosition);
+                    var angleDiff = Mathf.Abs(Mathf.DeltaAngle(inputAngle, targetAngle));
+
+                    if (angleDiff < minDiff2)
+                    {
+                        minDiff2 = angleDiff;
+                        closest2 = neighbour;
+                    }
+                }
+            }
+
+            return new Vector2Int[] { closest1, closest2 };
+        }
+
+        private float GetAngle(Vector2 center, Vector2 target)
+        {
+            Vector2 diff = new Vector2(target.x - center.x, target.y - center.y);
+            float angle = Mathf.Atan2(diff.x, diff.y) * Mathf.Rad2Deg;
+            if (angle < 0) angle += 360;
+            return angle;
         }
     }
 }

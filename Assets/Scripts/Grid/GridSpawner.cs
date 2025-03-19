@@ -21,7 +21,8 @@ namespace Hexfall.Grid
         // for testing
         private ManualGrid manualGrid;
 
-        public void Initialize(GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent, CameraController cameraController)
+        public void Initialize(GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent,
+            CameraController cameraController)
         {
             this.hexagonProperties = hexagonProperties;
             this.hexagonParent = hexagonParent;
@@ -73,6 +74,7 @@ namespace Hexfall.Grid
 
         public Hexagon GetHexagonObject(int width, int height)
         {
+            if (width < 0 || height < 0 || height >= gridHeight || width >= gridWidth) return null;
             if (hexagonGrid[width, height] == null) return null;
 
             return hexagonGrid[width, height];

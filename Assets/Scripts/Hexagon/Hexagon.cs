@@ -11,7 +11,7 @@ namespace Hexfall.Hex
     {
         [SerializeField] private HexagonProperties hexagonProperties;
         [SerializeField] private SpriteRenderer hexSprite;
-        [SerializeField] private BoxCollider2D myCollider;
+        [SerializeField] private PolygonCollider2D myCollider;
         [field: SerializeField] public HexagonType HexagonType { get; private set; }
         [field: SerializeField] public int IndexX { get; private set; }
         [field: SerializeField] public int IndexY { get; private set; }

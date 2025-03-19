@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Level 1
   m_EditorClassIdentifier: 
   gridWidth: 8
-  gridHeight: 8
+  gridHeight: 9

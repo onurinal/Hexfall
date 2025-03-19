@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexagonProperties: {fileID: 11400000, guid: 7f7ff7029a70c514e8b0492a76b2a107, type: 2}
   hexSprite: {fileID: 5164757200861376151}
-  myCollider: {fileID: 4112224789336129423}
+  myCollider: {fileID: 8926013785941850}
   <HexagonType>k__BackingField: 0
   <IndexX>k__BackingField: 0
   <IndexY>k__BackingField: 0
@@ -67,7 +67,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2851237373390427265}
   - component: {fileID: 5164757200861376151}
-  - component: {fileID: 4112224789336129423}
+  - component: {fileID: 8926013785941850}
   m_Layer: 0
   m_Name: Hexagon Model
   m_TagString: Untagged
@@ -142,8 +142,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &4112224789336129423
-BoxCollider2D:
+--- !u!60 &8926013785941850
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -184,9 +184,15 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.34, y: 0.58}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.164, y: 0.3134}
+      - {x: -0.316, y: -0.00118}
+      - {x: -0.1572, y: -0.3146}
+      - {x: 0.1564, y: -0.31354}
+      - {x: 0.31892, y: 0.00118}
+      - {x: 0.1592, y: 0.3136}
+  m_UseDelaunayMesh: 0
 --- !u!1 &8944014756352011562
 GameObject:
   m_ObjectHideFlags: 0

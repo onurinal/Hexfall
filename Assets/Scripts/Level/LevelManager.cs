@@ -25,7 +25,7 @@ namespace Hexfall.Level
             gridChecker = new GridChecker();
             gridMovement = new GridMovement();
             gridSpawner.Initialize(gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
-            playerController.Initialize(gridSpawner);
+            playerController.Initialize(gridSpawner, levelProperties);
 
             StartScanGrid();
         }
