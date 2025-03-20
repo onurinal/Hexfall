@@ -10,7 +10,7 @@ namespace Hexfall.Grid
         private HexagonProperties hexagonProperties;
         private GridSpawner gridSpawner;
 
-        public readonly bool IsTesting = false;
+        public readonly bool IsTesting = true;
 
         public void Initialize(Hexagon[,] hexagonGrid, HexagonProperties hexagonProperties, GridSpawner gridSpawner)
         {
@@ -32,7 +32,7 @@ namespace Hexfall.Grid
             hexagonGrid[6, 0] = CreateNewHexagon(6, 0, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
             hexagonGrid[7, 0] = CreateNewHexagon(7, 0, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
 
-            hexagonGrid[0, 1] = CreateNewHexagon(0, 1, HexagonType.Purple, hexagonProperties.HexagonPrefab);
+            hexagonGrid[0, 1] = CreateNewHexagon(0, 1, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
             hexagonGrid[1, 1] = CreateNewHexagon(1, 1, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
             hexagonGrid[2, 1] = CreateNewHexagon(2, 1, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[3, 1] = CreateNewHexagon(3, 1, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
@@ -41,7 +41,7 @@ namespace Hexfall.Grid
             hexagonGrid[6, 1] = CreateNewHexagon(6, 1, HexagonType.Blue, hexagonProperties.HexagonPrefab);
             hexagonGrid[7, 1] = CreateNewHexagon(7, 1, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
 
-            hexagonGrid[0, 2] = CreateNewHexagon(0, 2, HexagonType.Purple, hexagonProperties.HexagonPrefab);
+            hexagonGrid[0, 2] = CreateNewHexagon(0, 2, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[1, 2] = CreateNewHexagon(1, 2, HexagonType.Purple, hexagonProperties.HexagonPrefab);
             hexagonGrid[2, 2] = CreateNewHexagon(2, 2, HexagonType.Green, hexagonProperties.HexagonPrefab);
             hexagonGrid[3, 2] = CreateNewHexagon(3, 2, HexagonType.Blue, hexagonProperties.HexagonPrefab);
@@ -75,25 +75,34 @@ namespace Hexfall.Grid
             hexagonGrid[4, 5] = CreateNewHexagon(4, 5, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[5, 5] = CreateNewHexagon(5, 5, HexagonType.Blue, hexagonProperties.HexagonPrefab);
             hexagonGrid[6, 5] = CreateNewHexagon(6, 5, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
-            hexagonGrid[7, 5] = CreateNewHexagon(7, 5, HexagonType.Blue, hexagonProperties.HexagonPrefab);
+            hexagonGrid[7, 5] = CreateNewHexagon(7, 5, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
 
             hexagonGrid[0, 6] = CreateNewHexagon(0, 6, HexagonType.Blue, hexagonProperties.HexagonPrefab);
             hexagonGrid[1, 6] = CreateNewHexagon(1, 6, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
             hexagonGrid[2, 6] = CreateNewHexagon(2, 6, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[3, 6] = CreateNewHexagon(3, 6, HexagonType.Purple, hexagonProperties.HexagonPrefab);
             hexagonGrid[4, 6] = CreateNewHexagon(4, 6, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
-            hexagonGrid[5, 6] = CreateNewHexagon(5, 6, HexagonType.Purple, hexagonProperties.HexagonPrefab);
-            hexagonGrid[6, 6] = CreateNewHexagon(6, 6, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
-            hexagonGrid[7, 6] = CreateNewHexagon(7, 6, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
+            hexagonGrid[5, 6] = CreateNewHexagon(5, 6, HexagonType.Green, hexagonProperties.HexagonPrefab);
+            hexagonGrid[6, 6] = CreateNewHexagon(6, 6, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
+            hexagonGrid[7, 6] = CreateNewHexagon(7, 6, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
 
             hexagonGrid[0, 7] = CreateNewHexagon(0, 7, HexagonType.Purple, hexagonProperties.HexagonPrefab);
             hexagonGrid[1, 7] = CreateNewHexagon(1, 7, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
             hexagonGrid[2, 7] = CreateNewHexagon(2, 7, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[3, 7] = CreateNewHexagon(3, 7, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
             hexagonGrid[4, 7] = CreateNewHexagon(4, 7, HexagonType.Red, hexagonProperties.HexagonPrefab);
-            hexagonGrid[5, 7] = CreateNewHexagon(5, 7, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
+            hexagonGrid[5, 7] = CreateNewHexagon(5, 7, HexagonType.Red, hexagonProperties.HexagonPrefab);
             hexagonGrid[6, 7] = CreateNewHexagon(6, 7, HexagonType.Blue, hexagonProperties.HexagonPrefab);
-            hexagonGrid[7, 7] = CreateNewHexagon(7, 7, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
+            hexagonGrid[7, 7] = CreateNewHexagon(7, 7, HexagonType.Blue, hexagonProperties.HexagonPrefab);
+
+            hexagonGrid[0, 8] = CreateNewHexagon(0, 8, HexagonType.Yellow, hexagonProperties.HexagonPrefab);
+            hexagonGrid[1, 8] = CreateNewHexagon(1, 8, HexagonType.Purple, hexagonProperties.HexagonPrefab);
+            hexagonGrid[2, 8] = CreateNewHexagon(2, 8, HexagonType.Green, hexagonProperties.HexagonPrefab);
+            hexagonGrid[3, 8] = CreateNewHexagon(3, 8, HexagonType.Blue, hexagonProperties.HexagonPrefab);
+            hexagonGrid[4, 8] = CreateNewHexagon(4, 8, HexagonType.Red, hexagonProperties.HexagonPrefab);
+            hexagonGrid[5, 8] = CreateNewHexagon(5, 8, HexagonType.Blue, hexagonProperties.HexagonPrefab);
+            hexagonGrid[6, 8] = CreateNewHexagon(6, 8, HexagonType.Red, hexagonProperties.HexagonPrefab);
+            hexagonGrid[7, 8] = CreateNewHexagon(7, 8, HexagonType.Cyan, hexagonProperties.HexagonPrefab);
         }
 
         private Hexagon CreateNewHexagon(int width, int height, HexagonType hexagonType, Hexagon hexagonPrefab)
