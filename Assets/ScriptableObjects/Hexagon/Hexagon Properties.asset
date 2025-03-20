@@ -15,5 +15,5 @@ MonoBehaviour:
   hexagonPrefab: {fileID: 4601287034773024166, guid: bb88b045df073a4418880a331ef0471b, type: 3}
   moveDuration: 0.1
   destroyDuration: 0.15
-  <ScaleFactorX>k__BackingField: 0.48
-  <ScaleFactorY>k__BackingField: 0.32
+  <ScaleFactorX>k__BackingField: 0.55
+  <ScaleFactorY>k__BackingField: 0.321

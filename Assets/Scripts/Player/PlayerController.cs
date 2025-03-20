@@ -9,17 +9,21 @@ namespace Hexfall.Player
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private PlayerInput playerInput;
-        private GridSpawner gridSpawner;
 
+        private GridSpawner gridSpawner;
         private int gridWidth, gridHeight;
+
+        private readonly List<Hexagon> selectedHexagons = new List<Hexagon>();
         private Hexagon selectedHexagon;
         private bool isHexagonSelected = false;
-
-        private Vector2Int[][] neighbourOffsets = new Vector2Int[][]
+        private readonly Vector2Int[][] neighbourOffsets = new Vector2Int[][]
         {
             new Vector2Int[] { new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, 0), new(1, 1), }, // for even rows
             new Vector2Int[] { new(-1, -1), new(-1, 0), new(0, -1), new(0, 1), new(1, 0), new(1, -1), } // for odd rows
         };
+
+        // private readonly float highlightScaleFactorX = 0.275f;  // for group highlight sprite
+        // private readonly float highlightScaleFactorY = 0.321f;
 
         public void Initialize(GridSpawner gridSpawner, LevelProperties levelProperties)
         {
@@ -43,7 +47,7 @@ namespace Hexfall.Player
             {
                 if (!selectedHexagon)
                 {
-                    selectedHexagon = GetHexagonAtInputPosition(inputPosition);
+                    selectedHexagon = GetHexagonAtInput(inputPosition);
                     FindSelectedAreaOfHexagonAtInputPosition(inputPosition);
 
                     if (selectedHexagon)
@@ -80,7 +84,7 @@ namespace Hexfall.Player
             return Vector2.zero;
         }
 
-        private Hexagon GetHexagonAtInputPosition(Vector2 inputPosition)
+        private Hexagon GetHexagonAtInput(Vector2 inputPosition)
         {
             var hit = Physics2D.Raycast(inputPosition, Vector2.down);
 
@@ -103,6 +107,10 @@ namespace Hexfall.Player
 
             // a box collider was placed inside the hexagon. The box collider was divided into 8 parts and these parts are in the shape of triangles
             // to find the center position of this user input, we need collider bound size and divide this variable by 2
+            ToggleHighlight(false);
+            selectedHexagons.Clear();
+            AddHexagonsToSelectedList(selectedHexagon);
+
             Vector2 hexCenter = selectedHexagon.transform.position;
             var angle = GetAngle(hexCenter, inputPosition);
             Debug.Log($"selected angle: {angle}");
@@ -122,6 +130,9 @@ namespace Hexfall.Player
 
             var secondHex = gridSpawner.GetHexagonObject(secondHexAxis.x, secondHexAxis.y);
             var thirdHex = gridSpawner.GetHexagonObject(thirdHexAxis.x, thirdHexAxis.y);
+            AddHexagonsToSelectedList(secondHex);
+            AddHexagonsToSelectedList(thirdHex);
+            ToggleHighlight(true);
 
             Debug.Log($"First Hex: {selectedHexagon.IndexX}, {selectedHexagon.IndexY} Second Hex: {secondHex.IndexX}, {secondHex.IndexY} Third Hex: {thirdHex.IndexX}, {thirdHex.IndexY} ");
         }
@@ -197,5 +208,52 @@ namespace Hexfall.Player
             float angle = Mathf.Atan2(diff.x, diff.y) * Mathf.Rad2Deg;
             return (angle < 0) ? angle + 360 : angle;
         }
+
+        private void ToggleHighlight(bool state)
+        {
+            foreach (var hexagon in selectedHexagons)
+            {
+                hexagon.ToggleHighlight(state);
+            }
+        }
+
+        private void AddHexagonsToSelectedList(Hexagon hexagon)
+        {
+            selectedHexagons.Add(hexagon);
+        }
+
+        // this is for group highlight sprite, not working fully, still need to add some conditions to work properly
+        // private void DrawHexOutline(int hexIndexX, int hexIndexY, Hexagon first, Hexagon second)
+        // {
+        //     if (hexagonHighlighter == null) return;
+        //     var newOutlinePosition = GetHexagonOutlineWorldPosition(hexIndexX, hexIndexY);
+        //     hexagonHighlighter.transform.position = newOutlinePosition;
+        //
+        //     var diff = second.transform.position - first.transform.position;
+        //     var angle = Mathf.Abs(Mathf.Atan2(diff.x, diff.y) * Mathf.Rad2Deg);
+        //     if(angle <0) angle += 360;
+        //     Debug.Log($"hexagon highlight angle: {angle}");
+        // }
+        //
+        // private Vector2 GetHexagonOutlineWorldPosition(int width, int height)
+        // {
+        //     var xPos = (width * highlightScaleFactorX * 2f) + highlightScaleFactorX;
+        //     float yPos;
+        //
+        //     if (height % 2 == 0 && width % 2 == 0)
+        //     {
+        //         yPos = height % 2 == 0 ? (height * 2f * highlightScaleFactorY) + highlightScaleFactorY : height * highlightScaleFactorY * 2;
+        //     }
+        //     else if (width % 2 == 0 && height % 2 != 0)
+        //     {
+        //         yPos = (height * 2f * highlightScaleFactorY) + highlightScaleFactorY;
+        //     }
+        //     else
+        //     {
+        //         yPos = (height * 2f * highlightScaleFactorY);
+        //     }
+        //
+        //     return new Vector2(xPos, yPos);
+        // }
     }
 }

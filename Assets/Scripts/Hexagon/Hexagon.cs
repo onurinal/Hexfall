@@ -11,6 +11,7 @@ namespace Hexfall.Hex
     {
         [SerializeField] private HexagonProperties hexagonProperties;
         [SerializeField] private SpriteRenderer hexSprite;
+        [SerializeField] private SpriteRenderer hexHighlightedSprite;
         [SerializeField] private PolygonCollider2D myCollider;
         [field: SerializeField] public HexagonType HexagonType { get; private set; }
         [field: SerializeField] public int IndexX { get; private set; }
@@ -137,9 +138,9 @@ namespace Hexfall.Hex
             IndexY = indexY;
         }
 
-        public Vector2 GetColliderBoundsSize()
+        public void ToggleHighlight(bool state)
         {
-            return new Vector2(myCollider.bounds.size.x, myCollider.bounds.size.y);
+            hexHighlightedSprite.enabled = state;
         }
     }
 }
