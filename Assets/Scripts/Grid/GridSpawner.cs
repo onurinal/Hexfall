@@ -21,7 +21,7 @@ namespace Hexfall.Grid
         // for testing
         private ManualGrid manualGrid;
 
-        public void Initialize(GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent,
+        public void Initialize(LevelManager levelManager, GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent,
             CameraController cameraController)
         {
             this.hexagonProperties = hexagonProperties;
@@ -45,7 +45,7 @@ namespace Hexfall.Grid
             }
 
             gridChecker.Initialize(hexagonGrid, levelProperties);
-            gridMovement.Initialize(hexagonGrid, this, levelProperties, hexagonProperties);
+            gridMovement.Initialize(hexagonGrid, this, levelManager, gridChecker, levelProperties, hexagonProperties);
         }
 
         private void CreateNewGrid()
@@ -72,12 +72,12 @@ namespace Hexfall.Grid
             return new Vector2(positionX, positionY);
         }
 
-        public Hexagon GetHexagonObject(int width, int height)
+        public Hexagon GetHexagonAtAxis(int indexX, int indexY)
         {
-            if (width < 0 || height < 0 || height >= gridHeight || width >= gridWidth) return null;
-            if (hexagonGrid[width, height] == null) return null;
+            if (indexX < 0 || indexY < 0 || indexY >= gridHeight || indexX >= gridWidth) return null;
+            if (hexagonGrid[indexX, indexY] == null) return null;
 
-            return hexagonGrid[width, height];
+            return hexagonGrid[indexX, indexY];
         }
 
         private Hexagon CreateNewHexagon(int width, int height, Vector2 position)
@@ -108,6 +108,7 @@ namespace Hexfall.Grid
                 yield return new WaitForSeconds(hexagonProperties.MoveDuration / 3f);
             }
 
+            yield return new WaitForSeconds(hexagonProperties.MoveDuration);
             createNewHexagonToEmptySlotCoroutine = null;
         }
 
@@ -116,7 +117,7 @@ namespace Hexfall.Grid
             if (createNewHexagonToEmptySlotCoroutine != null) yield break;
 
             createNewHexagonToEmptySlotCoroutine = CreateNewHexagonToEmptySlotCoroutine();
-            CoroutineHandler.Instance.StartCoroutine(createNewHexagonToEmptySlotCoroutine);
+            yield return createNewHexagonToEmptySlotCoroutine;
         }
 
         private void StopCreateNewHexagonToEmptySlot()

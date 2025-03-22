@@ -2,25 +2,105 @@
 using DefaultNamespace;
 using Hexfall.Hex;
 using Hexfall.Level;
+using Hexfall.Manager;
+using Hexfall.Player;
 using UnityEngine;
 
 namespace Hexfall.Grid
 {
-    public class GridMovement
+    public class GridMovement : IGridPlayerMovement
     {
+        private LevelManager levelManager;
         private GridSpawner gridSpawner;
+        private GridChecker gridChecker;
+        private PlayerHighlight playerHighlight;
         private Hexagon[,] hexagonGrid;
         private LevelProperties levelProperties;
         private HexagonProperties hexagonProperties;
 
         private IEnumerator fillHexagonsEmptySlotCoroutine;
 
-        public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelProperties levelProperties, HexagonProperties hexagonProperties)
+        private IEnumerator swapHexagonsCoroutine;
+        public bool IsSwapping { get; set; } = false;
+
+        public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelManager levelManager, GridChecker gridChecker, LevelProperties levelProperties, HexagonProperties hexagonProperties)
         {
             this.hexagonGrid = hexagonGrid;
             this.gridSpawner = gridSpawner;
+            this.levelManager = levelManager;
+            this.gridChecker = gridChecker;
             this.levelProperties = levelProperties;
             this.hexagonProperties = hexagonProperties;
+        }
+
+        private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, int angleDiff)
+        {
+            if (firstHex == null || secondHex == null || thirdHex == null) yield break;
+
+            if (angleDiff > 30f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    SwapThreeHexagons(firstHex, secondHex, thirdHex);
+                    yield return new WaitForSeconds(hexagonProperties.MoveDuration);
+                    if (gridChecker.ScanGridAndGetMatchListCount() > 0)
+                    {
+                        yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
+                        break;
+                    }
+                }
+            }
+            else if (angleDiff <= -30f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    SwapThreeHexagons(firstHex, thirdHex, secondHex);
+                    yield return new WaitForSeconds(hexagonProperties.MoveDuration);
+                    if (gridChecker.ScanGridAndGetMatchListCount() > 0)
+                    {
+                        yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
+                        break;
+                    }
+                }
+            }
+
+            IsSwapping = false;
+            EventManager.StartOnSwappedEvent();
+            swapHexagonsCoroutine = null;
+        }
+
+        private void SwapThreeHexagons(Hexagon hexagon1, Hexagon hexagon2, Hexagon hexagon3)
+        {
+            if (hexagon1 == null || hexagon2 == null || hexagon3 == null) return;
+
+            var tempX = hexagon1.IndexX;
+            var tempY = hexagon1.IndexY;
+            hexagon1.SetIndices(hexagon2.IndexX, hexagon2.IndexY);
+            hexagon2.SetIndices(hexagon3.IndexX, hexagon3.IndexY);
+            hexagon3.SetIndices(tempX, tempY);
+
+            var tempPosition = hexagon1.transform.position;
+            hexagon1.Move(hexagon2.transform.position);
+            hexagon2.Move(hexagon3.transform.position);
+            hexagon3.Move(tempPosition);
+
+            hexagonGrid[hexagon1.IndexX, hexagon1.IndexY] = hexagon1;
+            hexagonGrid[hexagon2.IndexX, hexagon2.IndexY] = hexagon2;
+            hexagonGrid[hexagon3.IndexX, hexagon3.IndexY] = hexagon3;
+        }
+
+        public IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, int angleDiff)
+        {
+            if (swapHexagonsCoroutine != null) yield break;
+            swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, angleDiff);
+            yield return CoroutineHandler.Instance.StartCoroutine(swapHexagonsCoroutine);
+        }
+
+        public void StopSwapHexagons()
+        {
+            if (swapHexagonsCoroutine == null) return;
+            CoroutineHandler.Instance.StopCoroutine(swapHexagonsCoroutine);
+            swapHexagonsCoroutine = null;
         }
 
         private IEnumerator FillHexagonEmptySlotCoroutine()
@@ -60,7 +140,7 @@ namespace Hexfall.Grid
         {
             if (fillHexagonsEmptySlotCoroutine != null) yield break;
             fillHexagonsEmptySlotCoroutine = FillHexagonEmptySlotCoroutine();
-            yield return CoroutineHandler.Instance.StartCoroutine(fillHexagonsEmptySlotCoroutine);
+            yield return fillHexagonsEmptySlotCoroutine;
         }
 
         public void StopFillHexagonEmptySlot()

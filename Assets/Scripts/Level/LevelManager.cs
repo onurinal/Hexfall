@@ -24,40 +24,36 @@ namespace Hexfall.Level
             gridSpawner = new GridSpawner();
             gridChecker = new GridChecker();
             gridMovement = new GridMovement();
-            gridSpawner.Initialize(gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
-            playerController.Initialize(gridSpawner, levelProperties);
+            gridSpawner.Initialize(this, gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
+            playerController.Initialize(gridSpawner, gridMovement, levelProperties);
 
-            StartScanGrid();
+            CoroutineHandler.Instance.StartCoroutine(StartScanGrid());
         }
 
         private IEnumerator ScanGridCoroutine()
         {
             do
             {
-                yield return new WaitForSeconds(0.2f);
-                gridChecker.DestroyHexagonInMatchList();
-                // Debug.Log("Destroyed");
-                yield return new WaitForSeconds(0.2f);
-                yield return gridMovement.StartFillHexagonEmptySlot();
-                yield return new WaitForSeconds(0.2f);
-                // Debug.Log("Starting fill");
-                yield return gridSpawner.StartCreateNewHexagonToEmptySlot();
-                yield return new WaitForSeconds(0.2f);
-                // Debug.Log("Starting create new hexagon");
                 gridChecker.CheckAllGrid();
                 yield return new WaitForSeconds(0.2f);
-                // Debug.Log("Checking all grid");
-            } while (gridChecker.GetMatchListCount() > 0);
+                gridChecker.DestroyHexagonInMatchList();
+                yield return new WaitForSeconds(0.2f);
+                yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartFillHexagonEmptySlot());
+                yield return new WaitForSeconds(0.2f);
+                yield return CoroutineHandler.Instance.StartCoroutine(gridSpawner.StartCreateNewHexagonToEmptySlot());
+                yield return new WaitForSeconds(0.2f);
+                gridChecker.CheckAllGrid();
+            } while (gridChecker.GetMatchListCount() > 0); // Debug.Log("Checking all grid");
 
             scanGridCoroutine = null;
         }
 
-        private void StartScanGrid()
+        public IEnumerator StartScanGrid()
         {
-            if (scanGridCoroutine != null) return;
+            if (scanGridCoroutine != null) yield break;
 
             scanGridCoroutine = ScanGridCoroutine();
-            CoroutineHandler.Instance.StartCoroutine(scanGridCoroutine);
+            yield return scanGridCoroutine;
         }
 
         private void StopScanGrid()

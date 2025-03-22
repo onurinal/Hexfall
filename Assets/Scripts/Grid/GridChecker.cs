@@ -152,5 +152,11 @@ namespace Hexfall.Grid
         {
             return matchList.Count;
         }
+
+        public int ScanGridAndGetMatchListCount()
+        {
+            CheckAllGrid();
+            return matchList.Count;
+        }
     }
 }

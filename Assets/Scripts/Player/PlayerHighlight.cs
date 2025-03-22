@@ -1,27 +1,37 @@
-﻿using Hexfall.Hex;
+﻿using System;
+using Hexfall.Hex;
+using Hexfall.Manager;
 using UnityEngine;
 
 namespace Hexfall.Player
 {
-    public class PlayerHighlight
+    public class PlayerHighlight : MonoBehaviour
     {
-        private PlayerSelection playerSelection;
-        private SpriteRenderer groupHighlightSprite;
+        private PlayerMovement playerMovement;
+        [SerializeField] private SpriteRenderer groupHighlightSprite;
 
         private readonly float highlightScaleFactorX = 0.275f; // for group highlight sprite
         private readonly float highlightScaleFactorY = 0.321f;
 
-        public void Initialize(PlayerSelection playerSelection, SpriteRenderer groupHighlightSprite)
+        public void Initialize(PlayerMovement playerMovement)
         {
-            this.playerSelection = playerSelection;
-            this.groupHighlightSprite = groupHighlightSprite;
+            this.playerMovement = playerMovement;
+
+            EventManager.OnSwapping += HideHighlight;
+            EventManager.OnSwapped += ShowHighlight;
+        }
+
+        private void OnDestroy()
+        {
+            EventManager.OnSwapping -= HideHighlight;
+            EventManager.OnSwapped -= ShowHighlight;
         }
 
         public void DrawHexOutline(Hexagon selectedHexagon, Hexagon second)
         {
             if (groupHighlightSprite == null) return;
 
-            float angle = Mathf.Round(playerSelection.GetAngle(selectedHexagon.transform.position, second.transform.position));
+            float angle = Mathf.Round(playerMovement.GetAngle(selectedHexagon.transform.position, second.transform.position));
             groupHighlightSprite.transform.position = GetHexagonOutlineWorldPosition(selectedHexagon.IndexX, selectedHexagon.IndexY, angle);
             groupHighlightSprite.enabled = true;
         }
@@ -75,6 +85,16 @@ namespace Hexfall.Player
             float xPos = (newWidth * highlightScaleFactorX * 2f) + highlightScaleFactorX;
             groupHighlightSprite.flipX = flipX;
             return new Vector2(xPos, yPos);
+        }
+
+        public void HideHighlight()
+        {
+            groupHighlightSprite.enabled = false;
+        }
+
+        public void ShowHighlight()
+        {
+            groupHighlightSprite.enabled = true;
         }
     }
 }

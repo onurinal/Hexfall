@@ -6,23 +6,23 @@ namespace Hexfall.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer groupHighlightSprite;
         [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private PlayerHighlight playerHighlight;
+        [SerializeField] private PlayerMovement playerMovement;
 
-        private PlayerSelection playerSelection;
         // private int gridWidth, gridHeight;
 
-        public void Initialize(GridSpawner gridSpawner, LevelProperties levelProperties)
+        public void Initialize(GridSpawner gridSpawner, GridMovement gridMovement, LevelProperties levelProperties)
         {
             playerInput.Initialize();
-            playerSelection = new PlayerSelection();
-            playerSelection.Initialize(gridSpawner, playerInput, levelProperties, groupHighlightSprite);
+            playerMovement.Initialize(gridSpawner, gridMovement, playerHighlight, playerInput, levelProperties);
+            playerHighlight.Initialize(playerMovement);
         }
 
         private void Update()
         {
             playerInput.UpdatePlayerInput();
-            playerSelection.HandleHexagonSelect();
+            playerMovement.HandleHexagonSelect();
         }
     }
 }

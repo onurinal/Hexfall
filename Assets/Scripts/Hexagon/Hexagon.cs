@@ -20,6 +20,7 @@ namespace Hexfall.Hex
         [SerializeField] private TextMeshProUGUI indexText;
 
         private Tween moveTween;
+        private Tween destroyTween;
 
         private void Awake()
         {
@@ -30,6 +31,7 @@ namespace Hexfall.Hex
         private void OnDestroy()
         {
             moveTween?.Kill();
+            destroyTween?.Kill();
         }
 
         public void Initialize(int indexX, int indexY)
@@ -96,13 +98,16 @@ namespace Hexfall.Hex
 
         public void UpdateIndexText()
         {
-            indexText.transform.position = hexSprite.bounds.center;
-            indexText.text = IndexX + "," + IndexY;
+            if (indexText != null)
+            {
+                indexText.transform.position = hexSprite.bounds.center;
+                indexText.text = IndexX + "," + IndexY;
+            }
         }
 
         public void Move(Vector2 targetPosition)
         {
-            transform.DOMove(targetPosition, hexagonProperties.MoveDuration).SetEase(Ease.InSine);
+            moveTween = transform.DOMove(targetPosition, hexagonProperties.MoveDuration).SetEase(Ease.InSine);
         }
 
         public void MoveWithNoDelay(Vector2 targetPosition)
@@ -119,7 +124,7 @@ namespace Hexfall.Hex
 
         public void DestroyHexagon()
         {
-            transform.DOScale(new Vector2(0f, 0f), hexagonProperties.DestroyDuration).SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
+            destroyTween = transform.DOScale(new Vector2(0f, 0f), hexagonProperties.DestroyDuration).SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
         }
 
         public void HideHexagon()
@@ -136,6 +141,8 @@ namespace Hexfall.Hex
         {
             IndexX = indexX;
             IndexY = indexY;
+
+            UpdateIndexText();
         }
 
         public void ToggleHighlight(bool state)
