@@ -11,6 +11,8 @@ namespace Hexfall.Player
 {
     public class PlayerMovement : MonoBehaviour
     {
+        private const float SwapThreshold = 0.2f;
+
         private Hexagon selectedHexagon, secondHexagon, thirdHexagon;
         private Vector2Int selectedHexagonAxis, secondHexagonAxis, thirdHexagonAxis;
         private GridSpawner gridSpawner;
@@ -38,31 +40,36 @@ namespace Hexfall.Player
             gridWidth = levelProperties.GridWidth;
             gridHeight = levelProperties.GridHeight;
 
-            EventManager.OnSwapped += SelectPreviousHexagonsAfterSwapped;
+            EventManager.OnSwapped += RestorePreviousHexagons;
         }
 
         private void OnDestroy()
         {
-            EventManager.OnSwapped -= SelectPreviousHexagonsAfterSwapped;
+            EventManager.OnSwapped -= RestorePreviousHexagons;
         }
 
         public void HandleHexagonSelect()
         {
             var inputPosition = GetInputPosition();
-            if (inputPosition != Vector2.zero)
-            {
-                if (isNewHexagonNeed && !gridPlayerMovement.IsSwapping)
-                {
-                    selectedHexagon = GetHexagonAtInput(inputPosition);
-                    (secondHexagon, thirdHexagon) = CalculateOtherTwoHexagonBasedOnFirst(inputPosition);
-                    isNewHexagonNeed = false;
-                }
+            if (inputPosition == Vector2.zero) return;
 
-                if (!isNewHexagonNeed && isSwapAvailable)
-                {
-                    SwapHexagons(selectedHexagon, secondHexagon, thirdHexagon, inputPosition);
-                }
+            if (isNewHexagonNeed && !gridPlayerMovement.IsSwapping)
+            {
+                SelectNewHexagons(inputPosition);
+                return;
             }
+
+            if (!isNewHexagonNeed && isSwapAvailable)
+            {
+                AttemptSwap(selectedHexagon, secondHexagon, thirdHexagon, inputPosition);
+            }
+        }
+
+        private void SelectNewHexagons(Vector2 inputPosition)
+        {
+            selectedHexagon = GetHexagonAtInput(inputPosition);
+            (secondHexagon, thirdHexagon) = FindAdjacentHexagons(inputPosition);
+            isNewHexagonNeed = false;
         }
 
         private Vector2 GetInputPosition()
@@ -96,14 +103,13 @@ namespace Hexfall.Player
             return Vector2.zero;
         }
 
-        private void SwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 currentInputPosition)
+        private void AttemptSwap(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 currentInputPosition)
         {
-            if (currentInputPosition == Vector2.zero) return;
-            if (firstHex == null || secondHex == null || thirdHex == null) return;
+            if (currentInputPosition == Vector2.zero || firstHex == null || secondHex == null || thirdHex == null) return;
 
             var delta = currentInputPosition - playerInput.FirstMousePosition;
 
-            if (delta.magnitude > 0.2f && !gridPlayerMovement.IsSwapping)
+            if (delta.magnitude > SwapThreshold && !gridPlayerMovement.IsSwapping)
             {
                 var inputAngle = GetAngle(playerInput.FirstMousePosition, currentInputPosition);
                 var angle = GetAngle(selectedHexagon.transform.position, secondHex.transform.position);
@@ -118,7 +124,7 @@ namespace Hexfall.Player
             }
         }
 
-        private (Hexagon, Hexagon) CalculateOtherTwoHexagonBasedOnFirst(Vector2 inputPosition)
+        private (Hexagon, Hexagon) FindAdjacentHexagons(Vector2 inputPosition)
         {
             if (selectedHexagon == null || inputPosition == Vector2.zero) return (null, null);
 
@@ -134,7 +140,7 @@ namespace Hexfall.Player
             var neighbours = GetValidNeighbourHexagons(selectedHexagon.IndexX, selectedHexagon.IndexY);
             if (neighbours.Count < 2) return (null, null);
 
-            var (secondHexAxis, thirdHexAxis) = GetClosestNeighbour(neighbours, inputAngle);
+            var (secondHexAxis, thirdHexAxis) = FindTwoClosestNeighbours(neighbours, inputAngle);
             if (secondHexAxis == Vector2Int.zero || thirdHexAxis == Vector2Int.zero) return (null, null);
 
             secondHexagon = gridSpawner.GetHexagonAtAxis(secondHexAxis.x, secondHexAxis.y);
@@ -156,7 +162,7 @@ namespace Hexfall.Player
             foreach (var offset in neighbourOffsets[rowType])
             {
                 Vector2Int neighbour = new Vector2Int(indexX + offset.x, indexY + offset.y);
-                if (IsValidHexagon(neighbour))
+                if (IsHexagonWithinBounds(neighbour))
                 {
                     validNeighbours.Add(neighbour);
                 }
@@ -165,12 +171,12 @@ namespace Hexfall.Player
             return validNeighbours;
         }
 
-        private bool IsValidHexagon(Vector2Int hexagon)
+        private bool IsHexagonWithinBounds(Vector2Int hexagon)
         {
             return hexagon.x >= 0 && hexagon.y >= 0 && hexagon.x < gridWidth && hexagon.y < gridHeight;
         }
 
-        private (Vector2Int, Vector2Int) GetClosestNeighbour(List<Vector2Int> neighbours, float inputAngle)
+        private (Vector2Int, Vector2Int) FindTwoClosestNeighbours(List<Vector2Int> neighbours, float inputAngle)
         {
             Vector2Int closest1 = Vector2Int.zero, closest2 = Vector2Int.zero;
             float minDiff = float.MaxValue, minDiff2 = float.MaxValue;
@@ -248,7 +254,7 @@ namespace Hexfall.Player
             return angle;
         }
 
-        private void SelectPreviousHexagonsAfterSwapped()
+        private void RestorePreviousHexagons()
         {
             selectedHexagon = gridSpawner.GetHexagonAtAxis(selectedHexagonAxis.x, selectedHexagonAxis.y);
             secondHexagon = gridSpawner.GetHexagonAtAxis(secondHexagonAxis.x, secondHexagonAxis.y);
