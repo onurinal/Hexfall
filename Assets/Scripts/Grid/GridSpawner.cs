@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using DefaultNamespace;
 using Hexfall.CameraManager;
 using Hexfall.Level;
 using Hexfall.Hex;

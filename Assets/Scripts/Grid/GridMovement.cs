@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using DefaultNamespace;
 using Hexfall.Hex;
 using Hexfall.Level;
 using Hexfall.Manager;
@@ -33,11 +32,11 @@ namespace Hexfall.Grid
             this.hexagonProperties = hexagonProperties;
         }
 
-        private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, int angleDiff)
+        private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection)
         {
             if (firstHex == null || secondHex == null || thirdHex == null) yield break;
 
-            if (angleDiff > 30f)
+            if (moveDirection == Vector2.up || moveDirection == Vector2.left)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -50,7 +49,7 @@ namespace Hexfall.Grid
                     }
                 }
             }
-            else if (angleDiff <= -30f)
+            else if (moveDirection == Vector2.down || moveDirection == Vector2.right)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -89,10 +88,10 @@ namespace Hexfall.Grid
             hexagonGrid[hexagon3.IndexX, hexagon3.IndexY] = hexagon3;
         }
 
-        public IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, int angleDiff)
+        public IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection)
         {
             if (swapHexagonsCoroutine != null) yield break;
-            swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, angleDiff);
+            swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, moveDirection);
             yield return CoroutineHandler.Instance.StartCoroutine(swapHexagonsCoroutine);
         }
 

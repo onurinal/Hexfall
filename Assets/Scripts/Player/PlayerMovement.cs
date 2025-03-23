@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DefaultNamespace;
+﻿using System.Collections.Generic;
 using Hexfall.Grid;
 using Hexfall.Hex;
 using Hexfall.Level;
@@ -107,21 +105,31 @@ namespace Hexfall.Player
         {
             if (currentInputPosition == Vector2.zero || firstHex == null || secondHex == null || thirdHex == null) return;
 
-            var delta = currentInputPosition - playerInput.FirstMousePosition;
+            var direction = GetMovementDirection(currentInputPosition);
 
-            if (delta.magnitude > SwapThreshold && !gridPlayerMovement.IsSwapping)
+            if (direction.magnitude > SwapThreshold && !gridPlayerMovement.IsSwapping)
             {
-                var inputAngle = GetAngle(playerInput.FirstMousePosition, currentInputPosition);
-                var angle = GetAngle(selectedHexagon.transform.position, secondHex.transform.position);
-                var angleDiff = Mathf.DeltaAngle(inputAngle, angle);
-
                 gridPlayerMovement.IsSwapping = true;
                 isSwapAvailable = false;
                 EventManager.StartOnSwappingEvent();
                 SavePreviousHexagonAxisAfterSwapped();
 
-                CoroutineHandler.Instance.StartCoroutine(gridPlayerMovement.StartSwapHexagons(firstHex, secondHex, thirdHex, (int)angleDiff));
+                CoroutineHandler.Instance.StartCoroutine(gridPlayerMovement.StartSwapHexagons(firstHex, secondHex, thirdHex, direction));
             }
+        }
+
+        private Vector2 GetMovementDirection(Vector2 currentInputPosition)
+        {
+            var delta = currentInputPosition - playerInput.FirstMousePosition;
+
+            if (delta.magnitude < SwapThreshold) return Vector2.zero;
+
+            if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+            {
+                return delta.x > 0 ? Vector2.right : Vector2.left; // if delta x positive then move to clockwise
+            }
+
+            return delta.y > 0 ? Vector2.up : Vector2.down;
         }
 
         private (Hexagon, Hexagon) FindAdjacentHexagons(Vector2 inputPosition)
