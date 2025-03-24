@@ -52,8 +52,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexagonProperties: {fileID: 11400000, guid: 7f7ff7029a70c514e8b0492a76b2a107, type: 2}
   hexSprite: {fileID: 5164757200861376151}
-  hexHighlightedSprite: {fileID: 0}
-  myCollider: {fileID: 8926013785941850}
   <HexagonType>k__BackingField: 0
   <IndexX>k__BackingField: 0
   <IndexY>k__BackingField: 0
@@ -187,12 +185,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.17217872, y: 0.30363438}
-      - {x: -0.3421841, y: 0.0004679492}
-      - {x: -0.17190947, y: -0.30153847}
-      - {x: 0.16293076, y: -0.3020654}
-      - {x: 0.34016022, y: 0.0028279494}
-      - {x: 0.16902666, y: 0.30377334}
+    - - {x: -0.17364356, y: 0.2906339}
+      - {x: -0.33205226, y: -0.0009968946}
+      - {x: -0.17337431, y: -0.28414345}
+      - {x: 0.16866806, y: -0.2817407}
+      - {x: 0.32856354, y: 0.010091133}
+      - {x: 0.17036943, y: 0.2920546}
   m_UseDelaunayMesh: 0
 --- !u!1 &8944014756352011562
 GameObject:

@@ -75,8 +75,6 @@ namespace Hexfall.Player
 
         private Vector2 GetInputPosition()
         {
-            Vector2 delta = playerInput.CurrentMousePosition - playerInput.FirstMousePosition;
-
             if (Input.GetMouseButtonDown(0))
             {
                 playerInput.FirstMousePosition = playerInput.CurrentMousePosition;
@@ -90,13 +88,19 @@ namespace Hexfall.Player
 
             if (Input.GetMouseButtonUp(0))
             {
-                var isTap = delta.magnitude < SwapThreshold && !isSwapping;
+                Vector2 delta = playerInput.CurrentMousePosition - playerInput.FirstMousePosition;
+
                 // if player move the input after select hex then don't allow to select again
-
-                canSelectHex = isTap;
-                canSwap = !isTap;
-
-                return isTap ? playerInput.CurrentMousePosition : Vector2.zero;
+                if (delta.magnitude < 0.1f && !isSwapping)
+                {
+                    canSelectHex = true;
+                    return playerInput.CurrentMousePosition;
+                }
+                else
+                {
+                    canSwap = true;
+                    return Vector2.zero;
+                }
             }
 
             return Vector2.zero;
@@ -107,7 +111,6 @@ namespace Hexfall.Player
             if (currentInputPosition == Vector2.zero || firstHexagon == null || secondHexagon == null || thirdHexagon == null) return;
 
             var direction = GetMovementDirection(currentInputPosition);
-
             if (direction.magnitude > SwapThreshold && !isSwapping)
             {
                 isSwapping = true;
@@ -171,8 +174,6 @@ namespace Hexfall.Player
             if (neighbours.Count < 2) return (null, null);
 
             var (secondHexAxis, thirdHexAxis) = FindTwoClosestNeighbours(neighbours, inputAngle);
-            if (secondHexAxis == Vector2Int.zero || thirdHexAxis == Vector2Int.zero) return (null, null);
-
             secondHexagon = gridSpawner.GetHexagonAtAxis(secondHexAxis.x, secondHexAxis.y);
             thirdHexagon = gridSpawner.GetHexagonAtAxis(thirdHexAxis.x, thirdHexAxis.y);
 
@@ -220,12 +221,24 @@ namespace Hexfall.Player
 
                 if (angleDiff < minDiff) // new closest one
                 {
-                    minDiff2 = minDiff;
-                    closest2 = closest1;
                     minDiff = angleDiff;
                     closest1 = neighbour;
                 }
-                else if (angleDiff < minDiff2) // new closest two
+            }
+
+            neighbours.Remove(closest1);
+            var closest1Neighbours = GetValidNeighbourHexagons(closest1.x, closest1.y);
+
+            // Find the second-closest hexagon that is also a neighbor of the first closest hex
+            foreach (var neighbour in neighbours)
+            {
+                if (!closest1Neighbours.Contains(neighbour)) continue;
+
+                var targetPosition = gridSpawner.GetHexagonWorldPosition(neighbour.x, neighbour.y);
+                var angle = GetAngle(firstHexagon.transform.position, targetPosition);
+                var angleDiff = Mathf.Abs(Mathf.DeltaAngle(inputAngle, angle));
+
+                if (angleDiff < minDiff2)
                 {
                     minDiff2 = angleDiff;
                     closest2 = neighbour;
@@ -237,8 +250,6 @@ namespace Hexfall.Player
 
         private (Vector2Int, Vector2Int) EnsureClosestHexagonsClockwiseOrder(Vector2Int closest1, Vector2Int closest2)
         {
-            if (closest1 == Vector2Int.zero || closest2 == Vector2Int.zero) return (closest1, closest2);
-
             var angle1 = GetAngle(firstHexagon.transform.position, gridSpawner.GetHexagonWorldPosition(closest1.x, closest1.y));
             var angle2 = GetAngle(firstHexagon.transform.position, gridSpawner.GetHexagonWorldPosition(closest2.x, closest2.y));
 
