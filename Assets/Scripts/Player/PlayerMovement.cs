@@ -124,6 +124,7 @@ namespace Hexfall.Player
         private IEnumerator SwapCoroutine(Vector2 direction)
         {
             yield return gridPlayerMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction);
+            yield return new WaitForSeconds(0.15f);
             isSwapping = false;
             swapCoroutine = null;
         }
@@ -179,7 +180,7 @@ namespace Hexfall.Player
 
             if (secondHexagon != null && thirdHexagon != null)
             {
-                playerHighlight.DrawHexOutline(firstHexagon, secondHexagon);
+                playerHighlight.DrawHexOutline(firstHexagon, secondHexagon, thirdHexagon);
             }
 
             return (secondHexagon, thirdHexagon);

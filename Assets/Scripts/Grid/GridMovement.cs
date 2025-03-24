@@ -20,7 +20,6 @@ namespace Hexfall.Grid
         private IEnumerator fillHexagonsEmptySlotCoroutine;
 
         private IEnumerator swapHexagonsCoroutine;
-        public bool IsSwapping { get; set; } = false;
 
         public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelManager levelManager, GridChecker gridChecker, LevelProperties levelProperties, HexagonProperties hexagonProperties)
         {
@@ -63,7 +62,6 @@ namespace Hexfall.Grid
                 }
             }
 
-            IsSwapping = false;
             EventManager.StartOnSwappedEvent();
             swapHexagonsCoroutine = null;
         }

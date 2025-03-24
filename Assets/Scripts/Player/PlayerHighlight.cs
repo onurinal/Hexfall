@@ -11,8 +11,7 @@ namespace Hexfall.Player
         // [SerializeField] private SpriteRenderer hexagonsCenterSprite;
         private PlayerMovement playerMovement;
 
-        private readonly float highlightScaleFactorX = 0.275f; // for group highlight sprite
-        private readonly float highlightScaleFactorY = 0.321f;
+        private readonly float xOffset = 0.092f;
 
         public void Initialize(PlayerMovement playerMovement)
         {
@@ -28,72 +27,53 @@ namespace Hexfall.Player
             EventManager.OnSwapped -= ShowHighlight;
         }
 
-        public void DrawHexOutline(Hexagon selectedHexagon, Hexagon second)
+        public void DrawHexOutline(Hexagon firstHexagon, Hexagon secondHexagon, Hexagon thirdHexagon)
         {
             if (groupHighlightSprite == null) return;
 
-            float angle = Mathf.Round(playerMovement.GetAngle(selectedHexagon.transform.position, second.transform.position));
-            groupHighlightSprite.transform.position = GetHexagonOutlineWorldPosition(selectedHexagon.IndexX, selectedHexagon.IndexY, angle);
+            float angle = Mathf.Round(playerMovement.GetAngle(firstHexagon.transform.position, secondHexagon.transform.position));
+            var centerPositionOfVectors = (firstHexagon.transform.position + secondHexagon.transform.position + thirdHexagon.transform.position) / 3f;
+            var newCenterX = GetNewXPosition(angle, centerPositionOfVectors.x);
+            centerPositionOfVectors = new Vector3(newCenterX, centerPositionOfVectors.y, centerPositionOfVectors.z);
+
+            groupHighlightSprite.transform.position = centerPositionOfVectors;
             groupHighlightSprite.enabled = true;
         }
 
-        private Vector2 GetHexagonOutlineWorldPosition(int width, int height, float angle)
+        private float GetNewXPosition(float angle, float centerPosX)
         {
-            var newWidth = width;
-            var newHeight = height;
-            var flipX = false;
-            float yPos;
-
             switch ((int)angle)
             {
                 case 0:
-                    yPos = (height * 2f * highlightScaleFactorY) + (width % 2 == 0 ? highlightScaleFactorY * 2 : highlightScaleFactorY);
-                    flipX = true;
-                    break;
-
+                    groupHighlightSprite.flipX = true;
+                    return centerPosX + xOffset;
                 case 60:
-                    yPos = (height * 2f * highlightScaleFactorY) + ((width % 2 == 0) ? highlightScaleFactorY : 0);
-                    break;
-
+                    groupHighlightSprite.flipX = false;
+                    return centerPosX - xOffset;
                 case 120:
-                    newHeight -= 1;
-                    yPos = (newHeight * 2f * highlightScaleFactorY) + ((width % 2 == 0) ? highlightScaleFactorY * 2 : highlightScaleFactorY);
-                    flipX = true;
-                    break;
-
+                    groupHighlightSprite.flipX = true;
+                    return centerPosX + xOffset;
                 case 180:
-                    newWidth -= 1;
-                    newHeight = (width % 2 == 0) ? height : height - 1;
-                    yPos = (newHeight * 2f * highlightScaleFactorY) + ((width % 2 == 0) ? 0 : highlightScaleFactorY);
-                    break;
-
+                    groupHighlightSprite.flipX = false;
+                    return centerPosX - xOffset;
                 case 240:
-                    newWidth -= 1;
-                    yPos = (height * 2f * highlightScaleFactorY) + ((width % 2 == 0) ? highlightScaleFactorY : 0);
-                    flipX = true;
-                    break;
-
+                    groupHighlightSprite.flipX = true;
+                    return centerPosX + xOffset;
                 case 300:
-                    newWidth -= 1;
-                    newHeight = (width % 2 == 0) ? height + 1 : height;
-                    yPos = (newHeight * 2f * highlightScaleFactorY) + ((width % 2 == 0) ? 0 : highlightScaleFactorY);
-                    break;
-
+                    groupHighlightSprite.flipX = false;
+                    return centerPosX - xOffset;
                 default:
-                    return Vector2.zero;
+                    groupHighlightSprite.flipX = false;
+                    return centerPosX + xOffset;
             }
-
-            float xPos = (newWidth * highlightScaleFactorX * 2f) + highlightScaleFactorX;
-            groupHighlightSprite.flipX = flipX;
-            return new Vector2(xPos, yPos);
         }
 
-        public void HideHighlight()
+        private void HideHighlight()
         {
             groupHighlightSprite.enabled = false;
         }
 
-        public void ShowHighlight()
+        private void ShowHighlight()
         {
             groupHighlightSprite.enabled = true;
         }
