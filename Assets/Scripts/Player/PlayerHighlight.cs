@@ -7,8 +7,9 @@ namespace Hexfall.Player
 {
     public class PlayerHighlight : MonoBehaviour
     {
-        private PlayerMovement playerMovement;
         [SerializeField] private SpriteRenderer groupHighlightSprite;
+        // [SerializeField] private SpriteRenderer hexagonsCenterSprite;
+        private PlayerMovement playerMovement;
 
         private readonly float highlightScaleFactorX = 0.275f; // for group highlight sprite
         private readonly float highlightScaleFactorY = 0.321f;
