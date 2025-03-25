@@ -115,24 +115,23 @@ namespace Hexfall.Player
             {
                 isSwapping = true;
                 canSwap = false;
-                EventManager.StartOnSwappingEvent();
                 SavePreviousHexagonAxisAfterSwapped();
-                StartSwap(direction);
+                StartSwap(direction, currentInputPosition);
             }
         }
 
-        private IEnumerator SwapCoroutine(Vector2 direction)
+        private IEnumerator SwapCoroutine(Vector2 direction, Vector2 currentInputPosition)
         {
-            yield return gridPlayerMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction);
+            yield return gridPlayerMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction, currentInputPosition);
             yield return new WaitForSeconds(0.15f);
             isSwapping = false;
             swapCoroutine = null;
         }
 
-        private void StartSwap(Vector2 direction)
+        private void StartSwap(Vector2 direction, Vector2 currentInputPosition)
         {
             if (swapCoroutine != null) return;
-            swapCoroutine = SwapCoroutine(direction);
+            swapCoroutine = SwapCoroutine(direction, currentInputPosition);
             CoroutineHandler.Instance.StartCoroutine(swapCoroutine);
         }
 

@@ -31,31 +31,39 @@ namespace Hexfall.Grid
             this.hexagonProperties = hexagonProperties;
         }
 
-        private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection)
+        private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection, Vector2 currentInputPosition)
         {
             if (firstHex == null || secondHex == null || thirdHex == null) yield break;
 
-            if (moveDirection == Vector2.up || moveDirection == Vector2.left)
+            var centerPosition = (firstHex.transform.position + secondHex.transform.position + thirdHex.transform.position) / 3f;
+            var isInputLeftSide = currentInputPosition.x < centerPosition.x;
+            var isInputTopSide = currentInputPosition.y > centerPosition.y;
+
+            if ((isInputLeftSide && moveDirection == Vector2.up) || (isInputTopSide && moveDirection == Vector2.right) || (!isInputTopSide && moveDirection == Vector2.left) ||
+                (!isInputLeftSide && moveDirection == Vector2.down))
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    SwapThreeHexagons(firstHex, secondHex, thirdHex);
+                    SwapThreeHexagons(firstHex, secondHex, thirdHex, centerPosition, -120f);
                     yield return new WaitForSeconds(hexagonProperties.MoveDuration);
                     if (gridChecker.ScanGridAndGetMatchListCount() > 0)
                     {
+                        EventManager.StartOnSwappingEvent();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
                         break;
                     }
                 }
             }
-            else if (moveDirection == Vector2.down || moveDirection == Vector2.right)
+            else if ((isInputLeftSide && moveDirection == Vector2.down) || (isInputTopSide && moveDirection == Vector2.left) || (!isInputTopSide && moveDirection == Vector2.right) ||
+                     (!isInputLeftSide && moveDirection == Vector2.up))
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    SwapThreeHexagons(firstHex, thirdHex, secondHex);
+                    SwapThreeHexagons(firstHex, thirdHex, secondHex, centerPosition, 120f);
                     yield return new WaitForSeconds(hexagonProperties.MoveDuration);
                     if (gridChecker.ScanGridAndGetMatchListCount() > 0)
                     {
+                        EventManager.StartOnSwappingEvent();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
                         break;
                     }
@@ -66,7 +74,7 @@ namespace Hexfall.Grid
             swapHexagonsCoroutine = null;
         }
 
-        private void SwapThreeHexagons(Hexagon hexagon1, Hexagon hexagon2, Hexagon hexagon3)
+        private void SwapThreeHexagons(Hexagon hexagon1, Hexagon hexagon2, Hexagon hexagon3, Vector3 centerPosition, float angle)
         {
             if (hexagon1 == null || hexagon2 == null || hexagon3 == null) return;
 
@@ -77,19 +85,19 @@ namespace Hexfall.Grid
             hexagon3.SetIndices(tempX, tempY);
 
             var tempPosition = hexagon1.transform.position;
-            hexagon1.Move(hexagon2.transform.position);
-            hexagon2.Move(hexagon3.transform.position);
-            hexagon3.Move(tempPosition);
+            hexagon1.StartRotateCoroutine(centerPosition, hexagon2.transform.position, angle);
+            hexagon2.StartRotateCoroutine(centerPosition, hexagon3.transform.position, angle);
+            hexagon3.StartRotateCoroutine(centerPosition, tempPosition, angle);
 
             hexagonGrid[hexagon1.IndexX, hexagon1.IndexY] = hexagon1;
             hexagonGrid[hexagon2.IndexX, hexagon2.IndexY] = hexagon2;
             hexagonGrid[hexagon3.IndexX, hexagon3.IndexY] = hexagon3;
         }
 
-        public IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection)
+        public IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection, Vector2 currentInputPosition)
         {
             if (swapHexagonsCoroutine != null) yield break;
-            swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, moveDirection);
+            swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, moveDirection, currentInputPosition);
             yield return CoroutineHandler.Instance.StartCoroutine(swapHexagonsCoroutine);
         }
 

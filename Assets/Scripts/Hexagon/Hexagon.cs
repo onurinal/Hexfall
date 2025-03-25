@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine.UIElements.Experimental;
 
 namespace Hexfall.Hex
@@ -18,7 +20,9 @@ namespace Hexfall.Hex
         [SerializeField] private TextMeshProUGUI indexText;
 
         private Tween moveTween;
+        private Tween rotateTween;
         private Tween destroyTween;
+        private IEnumerator rotateCoroutine;
 
         private void Awake()
         {
@@ -30,6 +34,7 @@ namespace Hexfall.Hex
         {
             moveTween?.Kill();
             destroyTween?.Kill();
+            StopRotateCoroutine();
         }
 
         public void Initialize(int indexX, int indexY)
@@ -111,6 +116,41 @@ namespace Hexfall.Hex
         public void MoveWithNoDelay(Vector2 targetPosition)
         {
             transform.position = targetPosition;
+        }
+
+        private IEnumerator RotateCoroutine(Vector3 centerPosition, Vector2 targetPosition, float angle)
+        {
+            var timeElapsed = 0f;
+            float initialAngle = transform.eulerAngles.z;
+            float targetAngle = initialAngle + angle;
+
+            while (timeElapsed < hexagonProperties.MoveDuration)
+            {
+                timeElapsed += Time.deltaTime;
+                float currentAngle = Mathf.Lerp(initialAngle, targetAngle, timeElapsed / hexagonProperties.MoveDuration);
+                transform.RotateAround(centerPosition, Vector3.forward, currentAngle - transform.eulerAngles.z);
+                yield return null;
+            }
+
+            transform.RotateAround(centerPosition, Vector3.forward, targetAngle - transform.eulerAngles.z);
+            transform.position = targetPosition;
+            rotateCoroutine = null;
+        }
+
+        public void StartRotateCoroutine(Vector3 centerPosition, Vector2 targetPosition, float angle)
+        {
+            if (rotateCoroutine != null) return;
+
+            rotateCoroutine = RotateCoroutine(centerPosition, targetPosition, angle);
+            CoroutineHandler.Instance.StartCoroutine(rotateCoroutine);
+        }
+
+        private void StopRotateCoroutine()
+        {
+            if (rotateCoroutine == null) return;
+
+            CoroutineHandler.Instance.StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
         }
 
         private void UpdateScaleFactor()

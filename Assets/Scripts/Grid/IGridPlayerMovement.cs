@@ -6,6 +6,6 @@ namespace Hexfall.Grid
 {
     public interface IGridPlayerMovement
     {
-        IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection);
+        IEnumerator StartSwapHexagons(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection, Vector2 currentInputPosition);
     }
 }

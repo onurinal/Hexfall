@@ -8,7 +8,7 @@ namespace Hexfall.Player
     public class PlayerHighlight : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer groupHighlightSprite;
-        // [SerializeField] private SpriteRenderer hexagonsCenterSprite;
+        [SerializeField] private SpriteRenderer hexagonsCenterSprite;
         private PlayerMovement playerMovement;
 
         private readonly float xOffset = 0.092f;
@@ -17,8 +17,8 @@ namespace Hexfall.Player
         {
             this.playerMovement = playerMovement;
 
-            EventManager.OnSwapping += HideHighlight;
             EventManager.OnSwapped += ShowHighlight;
+            EventManager.OnSwapping += HideHighlight;
         }
 
         private void OnDestroy()
@@ -33,10 +33,15 @@ namespace Hexfall.Player
 
             float angle = Mathf.Round(playerMovement.GetAngle(firstHexagon.transform.position, secondHexagon.transform.position));
             var centerPositionOfVectors = (firstHexagon.transform.position + secondHexagon.transform.position + thirdHexagon.transform.position) / 3f;
-            var newCenterX = GetNewXPosition(angle, centerPositionOfVectors.x);
-            centerPositionOfVectors = new Vector3(newCenterX, centerPositionOfVectors.y, centerPositionOfVectors.z);
+            hexagonsCenterSprite.transform.position = centerPositionOfVectors;
+
+            // for group highlighter, needs to add some offset because of sprite size
+            var newGroupHighlightX = GetNewXPosition(angle, centerPositionOfVectors.x);
+            centerPositionOfVectors = new Vector3(newGroupHighlightX, centerPositionOfVectors.y, centerPositionOfVectors.z);
 
             groupHighlightSprite.transform.position = centerPositionOfVectors;
+
+            hexagonsCenterSprite.enabled = true;
             groupHighlightSprite.enabled = true;
         }
 
@@ -70,12 +75,14 @@ namespace Hexfall.Player
 
         private void HideHighlight()
         {
+            hexagonsCenterSprite.enabled = false;
             groupHighlightSprite.enabled = false;
         }
 
         private void ShowHighlight()
         {
             groupHighlightSprite.enabled = true;
+            hexagonsCenterSprite.enabled = true;
         }
     }
 }
