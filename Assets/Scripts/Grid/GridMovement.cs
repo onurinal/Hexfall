@@ -78,16 +78,16 @@ namespace Hexfall.Grid
         {
             if (hexagon1 == null || hexagon2 == null || hexagon3 == null) return;
 
+            var tempPosition = hexagon1.transform.position;
+            hexagon1.StartRotateCoroutine(centerPosition, hexagon2.transform.position, angle);
+            hexagon2.StartRotateCoroutine(centerPosition, hexagon3.transform.position, angle);
+            hexagon3.StartRotateCoroutine(centerPosition, tempPosition, angle);
+
             var tempX = hexagon1.IndexX;
             var tempY = hexagon1.IndexY;
             hexagon1.SetIndices(hexagon2.IndexX, hexagon2.IndexY);
             hexagon2.SetIndices(hexagon3.IndexX, hexagon3.IndexY);
             hexagon3.SetIndices(tempX, tempY);
-
-            var tempPosition = hexagon1.transform.position;
-            hexagon1.StartRotateCoroutine(centerPosition, hexagon2.transform.position, angle);
-            hexagon2.StartRotateCoroutine(centerPosition, hexagon3.transform.position, angle);
-            hexagon3.StartRotateCoroutine(centerPosition, tempPosition, angle);
 
             hexagonGrid[hexagon1.IndexX, hexagon1.IndexY] = hexagon1;
             hexagonGrid[hexagon2.IndexX, hexagon2.IndexY] = hexagon2;

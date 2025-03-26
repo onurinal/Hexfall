@@ -123,7 +123,7 @@ namespace Hexfall.Player
         private IEnumerator SwapCoroutine(Vector2 direction, Vector2 currentInputPosition)
         {
             yield return gridPlayerMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction, currentInputPosition);
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.1f);
             isSwapping = false;
             swapCoroutine = null;
         }

@@ -126,10 +126,10 @@ namespace Hexfall.Hex
 
             while (timeElapsed < hexagonProperties.MoveDuration)
             {
-                timeElapsed += Time.deltaTime;
                 float currentAngle = Mathf.Lerp(initialAngle, targetAngle, timeElapsed / hexagonProperties.MoveDuration);
                 transform.RotateAround(centerPosition, Vector3.forward, currentAngle - transform.eulerAngles.z);
                 yield return null;
+                timeElapsed += Time.deltaTime;
             }
 
             transform.RotateAround(centerPosition, Vector3.forward, targetAngle - transform.eulerAngles.z);
