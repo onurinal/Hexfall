@@ -61,7 +61,7 @@ namespace Hexfall.Grid
 
                 if (IsHexagonNull(startX, startY) || IsHexagonNull(secondX, secondY)) return;
 
-                if (hexagonGrid[startX, startY].HexagonType == hexagonGrid[secondX, secondY].HexagonType)
+                if (hexagonGrid[startX, startY].HexagonColorType == hexagonGrid[secondX, secondY].HexagonColorType)
                 {
                     matchCount++;
                     AddHexagonInTempMatchList(hexagonGrid[secondX, secondY]);
@@ -90,7 +90,7 @@ namespace Hexfall.Grid
                     if (secondX + addX >= gridWidth || secondX + addX < 0 || secondY + addY >= gridHeight || secondY + addY < 0) return;
 
                     if (IsHexagonNull(startX, startY) || IsHexagonNull(secondX + addX, secondY + addY)) return;
-                    if (hexagonGrid[startX, startY].HexagonType != hexagonGrid[secondX + addX, secondY + addY].HexagonType) return;
+                    if (hexagonGrid[startX, startY].HexagonColorType != hexagonGrid[secondX + addX, secondY + addY].HexagonColorType) return;
 
                     matchCount++;
                     AddHexagonInTempMatchList(hexagonGrid[secondX + addX, secondY + addY]);

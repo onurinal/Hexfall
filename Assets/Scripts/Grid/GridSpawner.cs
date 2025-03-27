@@ -81,9 +81,35 @@ namespace Hexfall.Grid
 
         private Hexagon CreateNewHexagon(int width, int height, Vector2 position)
         {
-            var hexagon = Object.Instantiate(hexagonProperties.DefaultHexagon, position, Quaternion.identity, hexagonParent);
-            hexagon.Initialize(width, height);
-            return hexagon;
+            var hexagonType = TryToGetOtherThanDefaultHexagon();
+            Hexagon hexagon = hexagonType == HexagonType.Special ? hexagonProperties.BombHexagon : hexagonProperties.DefaultHexagon;
+
+            var newHex = Object.Instantiate(hexagon, position, Quaternion.identity, hexagonParent);
+            newHex.Initialize(width, height, hexagonType);
+            return newHex;
+        }
+
+        private HexagonType TryToGetOtherThanDefaultHexagon()
+        {
+            var randomPercentage = Random.Range(0, 101);
+
+            if (randomPercentage >= 0 && randomPercentage <= hexagonProperties.DefaultHexPossibility)
+            {
+                return HexagonType.Default;
+            }
+
+            if (randomPercentage > hexagonProperties.DefaultHexPossibility && randomPercentage <= hexagonProperties.DefaultHexPossibility + hexagonProperties.BonusHexPossibility)
+            {
+                return HexagonType.Bonus;
+            }
+
+            if (randomPercentage > hexagonProperties.DefaultHexPossibility + hexagonProperties.BonusHexPossibility &&
+                randomPercentage <= hexagonProperties.DefaultHexPossibility + hexagonProperties.BonusHexPossibility + hexagonProperties.SpecialHexPossibility)
+            {
+                return HexagonType.Special;
+            }
+
+            return HexagonType.Default;
         }
 
         private IEnumerator CreateNewHexagonToEmptySlotCoroutine()

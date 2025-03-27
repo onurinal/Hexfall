@@ -82,8 +82,8 @@ namespace Hexfall.Player
         {
             if (hexagonsCenterSprite == null || groupHighlightSprite == null) return;
 
-            hexagonsCenterSprite.enabled = false;
-            groupHighlightSprite.enabled = false;
+            hexagonsCenterSprite.gameObject.SetActive(false);
+            groupHighlightSprite.gameObject.SetActive(false);
 
             if (IsAngleChanged())
             {
@@ -96,8 +96,8 @@ namespace Hexfall.Player
             if (hexagonsCenterSprite == null || groupHighlightSprite == null) return;
 
             ResetToOriginalPosition();
-            groupHighlightSprite.enabled = true;
-            hexagonsCenterSprite.enabled = true;
+            groupHighlightSprite.gameObject.SetActive(true);
+            hexagonsCenterSprite.gameObject.SetActive(true);
         }
 
         private IEnumerator RotateCoroutine(Vector3 centerPosition, float angle)

@@ -13,7 +13,10 @@ namespace Hexfall.Hex
     {
         [SerializeField] private HexagonProperties hexagonProperties;
         [SerializeField] private SpriteRenderer hexSprite;
+        [SerializeField] private SpriteRenderer bonusSprite;
         [field: SerializeField] public HexagonType HexagonType { get; private set; }
+        [field: SerializeField] public HexagonSpecialType HexagonSpecialType { get; private set; }
+        [field: SerializeField] public HexagonColorType HexagonColorType { get; private set; }
         [field: SerializeField] public int IndexX { get; private set; }
         [field: SerializeField] public int IndexY { get; private set; }
 
@@ -37,66 +40,74 @@ namespace Hexfall.Hex
             StopRotateCoroutine();
         }
 
-        public void Initialize(int indexX, int indexY)
+        public void Initialize(int indexX, int indexY, HexagonType hexagonType)
         {
-            IndexX = indexX;
-            IndexY = indexY;
-
+            SetIndices(indexX, indexY);
+            HexagonType = hexagonType;
             UpdateIndexText();
 
-            HexagonType = (HexagonType)Random.Range(0, Enum.GetNames(typeof(HexagonType)).Length);
-
-            switch (HexagonType)
+            if (HexagonType == HexagonType.Bonus)
             {
-                case HexagonType.Red:
+                ActiveBonusSprite();
+            }
+
+            HexagonColorType = (HexagonColorType)Random.Range(0, Enum.GetNames(typeof(HexagonColorType)).Length);
+
+            switch (HexagonColorType)
+            {
+                case HexagonColorType.Red:
                     hexSprite.color = Color.red;
                     break;
-                case HexagonType.Yellow:
+                case HexagonColorType.Yellow:
                     hexSprite.color = Color.yellow;
                     break;
-                case HexagonType.Blue:
+                case HexagonColorType.Blue:
                     hexSprite.color = Color.blue;
                     break;
-                case HexagonType.Purple:
+                case HexagonColorType.Purple:
                     hexSprite.color = Color.magenta;
                     break;
-                case HexagonType.Green:
+                case HexagonColorType.Green:
                     hexSprite.color = Color.green;
                     break;
-                case HexagonType.Cyan:
+                case HexagonColorType.Cyan:
                     hexSprite.color = Color.cyan;
                     break;
             }
         }
 
-        public void InitializeForTest(int indexX, int indexY, HexagonType hexagonType)
+        public void InitializeForTest(int indexX, int indexY, HexagonColorType hexagonColorType)
         {
             SetIndices(indexX, indexY);
-            HexagonType = hexagonType;
-
+            HexagonColorType = hexagonColorType;
             UpdateIndexText();
 
-            switch (hexagonType)
+            switch (HexagonColorType)
             {
-                case HexagonType.Red:
+                case HexagonColorType.Red:
                     hexSprite.color = Color.red;
                     break;
-                case HexagonType.Yellow:
+                case HexagonColorType.Yellow:
                     hexSprite.color = Color.yellow;
                     break;
-                case HexagonType.Blue:
+                case HexagonColorType.Blue:
                     hexSprite.color = Color.blue;
                     break;
-                case HexagonType.Purple:
+                case HexagonColorType.Purple:
                     hexSprite.color = Color.magenta;
                     break;
-                case HexagonType.Green:
+                case HexagonColorType.Green:
                     hexSprite.color = Color.green;
                     break;
-                case HexagonType.Cyan:
+                case HexagonColorType.Cyan:
                     hexSprite.color = Color.cyan;
                     break;
             }
+        }
+
+        private void ActiveBonusSprite()
+        {
+            bonusSprite.gameObject.SetActive(true);
         }
 
         public void UpdateIndexText()

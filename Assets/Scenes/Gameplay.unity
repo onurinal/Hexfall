@@ -374,9 +374,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 574973111050609891, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1182575080393041004, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4512282885540839635, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
       propertyPath: m_Name
       value: PlayerController
+      objectReference: {fileID: 0}
+    - target: {fileID: 4619441630127500507, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6084661982839710345, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
       propertyPath: m_LocalPosition.x
@@ -417,6 +429,10 @@ PrefabInstance:
     - target: {fileID: 6084661982839710345, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119449574701942956, guid: 8b0427084c8d3b64dbebfd36e45e0b52, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
