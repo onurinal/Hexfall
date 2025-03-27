@@ -137,6 +137,8 @@ namespace Hexfall.Grid
         {
             if (matchList == null) return;
 
+            CheckComboForBombInMatchList();
+
             foreach (var hexagon in matchList)
             {
                 if (hexagon == null) return;
@@ -146,6 +148,64 @@ namespace Hexfall.Grid
             }
 
             matchList.Clear();
+        }
+
+        private List<HexagonColorType> CheckBombCandyInMatchList()
+        {
+            List<HexagonColorType> bombColorList = new List<HexagonColorType>();
+            foreach (var hexagon in matchList)
+            {
+                if (hexagon.HexagonType == HexagonType.Special && hexagon.HexagonSpecialType == HexagonSpecialType.Bomb)
+                {
+                    if (bombColorList.Contains(hexagon.HexagonColorType)) continue;
+                    bombColorList.Add(hexagon.HexagonColorType);
+                }
+            }
+
+            return bombColorList;
+        }
+
+        private void CheckComboForBombInMatchList()
+        {
+            var bombColorList = CheckBombCandyInMatchList();
+            if (bombColorList == null || bombColorList.Count <= 0) return;
+
+            List<HexagonColorType> newComboColorList = new List<HexagonColorType>();
+
+            foreach (var hexagon in matchList)
+            {
+                if (hexagon.HexagonType == HexagonType.Bonus)
+                {
+                    foreach (var bombColor in bombColorList)
+                    {
+                        if (hexagon.HexagonColorType == bombColor)
+                        {
+                            newComboColorList.Add(hexagon.HexagonColorType);
+                            // AddAllSameColorHexagonInMatchList(hexagon.HexagonColorType);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foreach (var color in newComboColorList)
+            {
+                AddAllSameColorHexagonInMatchList(color);
+            }
+        }
+
+        private void AddAllSameColorHexagonInMatchList(HexagonColorType hexagonColor)
+        {
+            foreach (var hexagon in hexagonGrid)
+            {
+                if (hexagon.HexagonColorType == hexagonColor)
+                {
+                    if (!matchList.Contains(hexagon))
+                    {
+                        matchList.Add(hexagon);
+                    }
+                }
+            }
         }
 
         public int GetMatchListCount()

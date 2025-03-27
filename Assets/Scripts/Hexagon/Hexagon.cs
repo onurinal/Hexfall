@@ -146,6 +146,7 @@ namespace Hexfall.Hex
             }
 
             transform.RotateAround(centerPosition, Vector3.forward, targetAngle - transform.eulerAngles.z);
+            transform.eulerAngles = Vector3.zero;
             transform.position = targetPosition;
             hexSprite.sortingOrder--;
             rotateCoroutine = null;

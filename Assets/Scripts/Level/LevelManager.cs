@@ -14,11 +14,16 @@ namespace Hexfall.Level
         private GridSpawner gridSpawner;
         private GridChecker gridChecker;
         private GridMovement gridMovement;
+        private HexagonProperties hexagonProperties;
 
         private IEnumerator scanGridCoroutine;
+        private IEnumerator newLevelCoroutine;
+
+        public bool IsGridInitializing { get; private set; } = false;
 
         public void Initialize(CameraController cameraController, PlayerController playerController, HexagonProperties hexagonProperties, Transform hexagonParent)
         {
+            this.hexagonProperties = hexagonProperties;
             cameraController.Initialize(levelProperties, hexagonProperties);
             gridSpawner = new GridSpawner();
             gridChecker = new GridChecker();
@@ -26,7 +31,7 @@ namespace Hexfall.Level
             gridSpawner.Initialize(this, gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
             playerController.Initialize(gridSpawner, gridMovement, levelProperties, hexagonProperties);
 
-            CoroutineHandler.Instance.StartCoroutine(StartScanGrid());
+            StartNewLevelCoroutine();
         }
 
         private IEnumerator ScanGridCoroutine()
@@ -34,13 +39,13 @@ namespace Hexfall.Level
             do
             {
                 gridChecker.CheckAllGrid();
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
                 gridChecker.DestroyHexagonInMatchList();
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
                 yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartFillHexagonEmptySlot());
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
                 yield return CoroutineHandler.Instance.StartCoroutine(gridSpawner.StartCreateNewHexagonToEmptySlot());
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
                 gridChecker.CheckAllGrid();
             } while (gridChecker.GetMatchListCount() > 0); // Debug.Log("Checking all grid");
 
@@ -62,6 +67,33 @@ namespace Hexfall.Level
                 CoroutineHandler.Instance.StopCoroutine(scanGridCoroutine);
                 scanGridCoroutine = null;
             }
+        }
+
+        private IEnumerator NewLevelCoroutine()
+        {
+            IsGridInitializing = true;
+            gridSpawner.HideAllHexagons();
+            yield return CoroutineHandler.Instance.StartCoroutine(StartScanGrid());
+            gridMovement.MoveAllHexagonsToTheTop();
+            gridSpawner.ShowAllHexagons();
+            yield return gridMovement.StartFallHexagonsCoroutine(hexagonProperties.MoveDuration / 2f);
+            IsGridInitializing = false;
+            newLevelCoroutine = null;
+        }
+
+        private void StartNewLevelCoroutine()
+        {
+            if (newLevelCoroutine != null) return;
+            newLevelCoroutine = NewLevelCoroutine();
+            CoroutineHandler.Instance.StartCoroutine(NewLevelCoroutine());
+        }
+
+        private void StopNewLevelCoroutine()
+        {
+            if (newLevelCoroutine == null) return;
+
+            CoroutineHandler.Instance.StopCoroutine(newLevelCoroutine);
+            newLevelCoroutine = null;
         }
     }
 }

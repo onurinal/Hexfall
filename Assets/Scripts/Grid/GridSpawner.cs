@@ -44,7 +44,7 @@ namespace Hexfall.Grid
             }
 
             gridChecker.Initialize(hexagonGrid, levelProperties);
-            gridMovement.Initialize(hexagonGrid, this, levelManager, gridChecker, levelProperties, hexagonProperties);
+            gridMovement.Initialize(hexagonGrid, this, levelManager, gridChecker, levelProperties, hexagonProperties, cameraController);
         }
 
         private void CreateNewGrid()
@@ -151,6 +151,22 @@ namespace Hexfall.Grid
             {
                 CoroutineHandler.Instance.StopCoroutine(createNewHexagonToEmptySlotCoroutine);
                 createNewHexagonToEmptySlotCoroutine = null;
+            }
+        }
+
+        public void ShowAllHexagons()
+        {
+            foreach (var hexagon in hexagonGrid)
+            {
+                hexagon.ShowHexagon();
+            }
+        }
+
+        public void HideAllHexagons()
+        {
+            foreach (var hexagon in hexagonGrid)
+            {
+                hexagon.HideHexagon();
             }
         }
     }
