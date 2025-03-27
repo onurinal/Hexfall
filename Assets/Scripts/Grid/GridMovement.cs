@@ -1,21 +1,20 @@
 ﻿using System.Collections;
 using Hexfall.Hex;
 using Hexfall.Level;
-using Hexfall.Manager;
 using Hexfall.Player;
 using UnityEngine;
 
 namespace Hexfall.Grid
 {
-    public class GridMovement : IGridPlayerMovement
+    public class GridMovement
     {
         private LevelManager levelManager;
         private GridSpawner gridSpawner;
         private GridChecker gridChecker;
-        private PlayerHighlight playerHighlight;
         private Hexagon[,] hexagonGrid;
         private LevelProperties levelProperties;
         private HexagonProperties hexagonProperties;
+        private PlayerHighlight playerHighlight;
 
         private IEnumerator fillHexagonsEmptySlotCoroutine;
 
@@ -31,6 +30,11 @@ namespace Hexfall.Grid
             this.hexagonProperties = hexagonProperties;
         }
 
+        public void InitializePlayerHighlight(PlayerHighlight playerHighlight)
+        {
+            this.playerHighlight = playerHighlight;
+        }
+
         private IEnumerator SwapHexagonsCoroutine(Hexagon firstHex, Hexagon secondHex, Hexagon thirdHex, Vector2 moveDirection, Vector2 currentInputPosition)
         {
             if (firstHex == null || secondHex == null || thirdHex == null) yield break;
@@ -44,11 +48,12 @@ namespace Hexfall.Grid
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    SwapThreeHexagons(firstHex, secondHex, thirdHex, centerPosition, -120f);
+                    SwapThreeHexagons(firstHex, secondHex, thirdHex, centerPosition, -hexagonProperties.RotationAngle);
+                    playerHighlight.StartRotateCoroutine(centerPosition, -hexagonProperties.RotationAngle);
                     yield return new WaitForSeconds(hexagonProperties.MoveDuration);
                     if (gridChecker.ScanGridAndGetMatchListCount() > 0)
                     {
-                        EventManager.StartOnSwappingEvent();
+                        playerHighlight.HideHighlight();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
                         break;
                     }
@@ -59,18 +64,19 @@ namespace Hexfall.Grid
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    SwapThreeHexagons(firstHex, thirdHex, secondHex, centerPosition, 120f);
+                    SwapThreeHexagons(firstHex, thirdHex, secondHex, centerPosition, hexagonProperties.RotationAngle);
+                    playerHighlight.StartRotateCoroutine(centerPosition, hexagonProperties.RotationAngle);
                     yield return new WaitForSeconds(hexagonProperties.MoveDuration);
                     if (gridChecker.ScanGridAndGetMatchListCount() > 0)
                     {
-                        EventManager.StartOnSwappingEvent();
+                        playerHighlight.HideHighlight();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
                         break;
                     }
                 }
             }
 
-            EventManager.StartOnSwappedEvent();
+            playerHighlight.ShowHighlight();
             swapHexagonsCoroutine = null;
         }
 
@@ -123,11 +129,10 @@ namespace Hexfall.Grid
                         {
                             if (hexagonGrid[width, i] != null)
                             {
-                                hexagonGrid[width, i].SetIndices(width, height);
-                                hexagonGrid[width, height] = hexagonGrid[width, i];
                                 var targetPosition = gridSpawner.GetHexagonWorldPosition(width, height);
                                 hexagonGrid[width, i].Move(targetPosition);
-                                hexagonGrid[width, height].UpdateIndexText(); // REMOVE IT AFTER TESTING FEATURES, DON'T NEED
+                                hexagonGrid[width, i].SetIndices(width, height);
+                                hexagonGrid[width, height] = hexagonGrid[width, i];
                                 hexagonGrid[width, i] = null;
                                 break;
                             }

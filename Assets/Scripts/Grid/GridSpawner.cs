@@ -81,7 +81,7 @@ namespace Hexfall.Grid
 
         private Hexagon CreateNewHexagon(int width, int height, Vector2 position)
         {
-            var hexagon = Object.Instantiate(hexagonProperties.HexagonPrefab, position, Quaternion.identity, hexagonParent);
+            var hexagon = Object.Instantiate(hexagonProperties.DefaultHexagon, position, Quaternion.identity, hexagonParent);
             hexagon.Initialize(width, height);
             return hexagon;
         }

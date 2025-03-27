@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using Hexfall.Hex;
-using Hexfall.Manager;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Hexfall.Player
 {
@@ -10,79 +12,127 @@ namespace Hexfall.Player
         [SerializeField] private SpriteRenderer groupHighlightSprite;
         [SerializeField] private SpriteRenderer hexagonsCenterSprite;
         private PlayerMovement playerMovement;
+        private HexagonProperties hexagonProperties;
+        private IEnumerator rotateCoroutine;
 
-        private readonly float xOffset = 0.092f;
+        // to reset position if highlight angle changes
+        private Vector3 originalPosition;
 
-        public void Initialize(PlayerMovement playerMovement)
+        private readonly float xOffset = 0.08f;
+
+        public void Initialize(PlayerMovement playerMovement, HexagonProperties hexagonProperties)
         {
             this.playerMovement = playerMovement;
-
-            EventManager.OnSwapped += ShowHighlight;
-            EventManager.OnSwapping += HideHighlight;
+            this.hexagonProperties = hexagonProperties;
         }
 
         private void OnDestroy()
         {
-            EventManager.OnSwapping -= HideHighlight;
-            EventManager.OnSwapped -= ShowHighlight;
+            StopRotateCoroutine();
         }
 
         public void DrawHexOutline(Hexagon firstHexagon, Hexagon secondHexagon, Hexagon thirdHexagon)
         {
             if (groupHighlightSprite == null) return;
 
-            float angle = Mathf.Round(playerMovement.GetAngle(firstHexagon.transform.position, secondHexagon.transform.position));
             var centerPositionOfVectors = (firstHexagon.transform.position + secondHexagon.transform.position + thirdHexagon.transform.position) / 3f;
             hexagonsCenterSprite.transform.position = centerPositionOfVectors;
 
             // for group highlighter, needs to add some offset because of sprite size
-            var newGroupHighlightX = GetNewXPosition(angle, centerPositionOfVectors.x);
-            centerPositionOfVectors = new Vector3(newGroupHighlightX, centerPositionOfVectors.y, centerPositionOfVectors.z);
+            var angle = Mathf.Round(playerMovement.GetAngle(firstHexagon.transform.position, secondHexagon.transform.position));
 
-            groupHighlightSprite.transform.position = centerPositionOfVectors;
+            var newGroupHighlightX = GetNewXPosition(centerPositionOfVectors.x, (int)angle);
+            originalPosition = new Vector3(newGroupHighlightX, centerPositionOfVectors.y, centerPositionOfVectors.z);
+            groupHighlightSprite.transform.position = originalPosition;
 
-            hexagonsCenterSprite.enabled = true;
-            groupHighlightSprite.enabled = true;
+            ShowHighlight();
         }
 
-        private float GetNewXPosition(float angle, float centerPosX)
+        private float GetNewXPosition(float centerPosX, int angle)
         {
-            switch ((int)angle)
+            var shouldFlip = angle == 0 || angle == 120 || angle == 240;
+            groupHighlightSprite.flipX = shouldFlip;
+            return centerPosX + (shouldFlip ? xOffset : -xOffset);
+        }
+
+        private bool IsAngleChanged()
+        {
+            var zAngle = groupHighlightSprite.transform.eulerAngles.z % 360;
+            return Mathf.Abs(zAngle) > 0.1f;
+        }
+
+        private void ResetAngle()
+        {
+            if (groupHighlightSprite == null || !IsAngleChanged()) return;
+
+            groupHighlightSprite.transform.rotation = Quaternion.identity;
+        }
+
+        private void ResetToOriginalPosition()
+        {
+            if (groupHighlightSprite == null) return;
+
+            if (groupHighlightSprite.transform.position != originalPosition)
             {
-                case 0:
-                    groupHighlightSprite.flipX = true;
-                    return centerPosX + xOffset;
-                case 60:
-                    groupHighlightSprite.flipX = false;
-                    return centerPosX - xOffset;
-                case 120:
-                    groupHighlightSprite.flipX = true;
-                    return centerPosX + xOffset;
-                case 180:
-                    groupHighlightSprite.flipX = false;
-                    return centerPosX - xOffset;
-                case 240:
-                    groupHighlightSprite.flipX = true;
-                    return centerPosX + xOffset;
-                case 300:
-                    groupHighlightSprite.flipX = false;
-                    return centerPosX - xOffset;
-                default:
-                    groupHighlightSprite.flipX = false;
-                    return centerPosX + xOffset;
+                groupHighlightSprite.transform.position = originalPosition;
             }
         }
 
-        private void HideHighlight()
+        public void HideHighlight()
         {
+            if (hexagonsCenterSprite == null || groupHighlightSprite == null) return;
+
             hexagonsCenterSprite.enabled = false;
             groupHighlightSprite.enabled = false;
+
+            if (IsAngleChanged())
+            {
+                ResetAngle();
+            }
         }
 
-        private void ShowHighlight()
+        public void ShowHighlight()
         {
+            if (hexagonsCenterSprite == null || groupHighlightSprite == null) return;
+
+            ResetToOriginalPosition();
             groupHighlightSprite.enabled = true;
             hexagonsCenterSprite.enabled = true;
+        }
+
+        private IEnumerator RotateCoroutine(Vector3 centerPosition, float angle)
+        {
+            float timeElapsed = 0f;
+            var initialAngle = groupHighlightSprite.transform.eulerAngles.z;
+            var targetAngle = angle + initialAngle;
+
+            while (timeElapsed < hexagonProperties.MoveDuration)
+            {
+                var currentAngle = Mathf.Lerp(initialAngle, targetAngle, timeElapsed / hexagonProperties.MoveDuration);
+                groupHighlightSprite.transform.RotateAround(centerPosition, Vector3.forward, currentAngle - groupHighlightSprite.transform.eulerAngles.z);
+                yield return null;
+
+                timeElapsed += Time.deltaTime;
+            }
+
+            groupHighlightSprite.transform.RotateAround(centerPosition, Vector3.forward, targetAngle - groupHighlightSprite.transform.eulerAngles.z);
+            rotateCoroutine = null;
+        }
+
+        public void StartRotateCoroutine(Vector3 centerPosition, float angle)
+        {
+            if (rotateCoroutine != null) return;
+
+            rotateCoroutine = RotateCoroutine(centerPosition, angle);
+            CoroutineHandler.Instance.StartCoroutine(rotateCoroutine);
+        }
+
+        private void StopRotateCoroutine()
+        {
+            if (rotateCoroutine == null) return;
+
+            CoroutineHandler.Instance.StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
         }
     }
 }

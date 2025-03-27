@@ -124,16 +124,19 @@ namespace Hexfall.Hex
             float initialAngle = transform.eulerAngles.z;
             float targetAngle = initialAngle + angle;
 
+            hexSprite.sortingOrder++;
             while (timeElapsed < hexagonProperties.MoveDuration)
             {
                 float currentAngle = Mathf.Lerp(initialAngle, targetAngle, timeElapsed / hexagonProperties.MoveDuration);
                 transform.RotateAround(centerPosition, Vector3.forward, currentAngle - transform.eulerAngles.z);
                 yield return null;
+
                 timeElapsed += Time.deltaTime;
             }
 
             transform.RotateAround(centerPosition, Vector3.forward, targetAngle - transform.eulerAngles.z);
             transform.position = targetPosition;
+            hexSprite.sortingOrder--;
             rotateCoroutine = null;
         }
 
