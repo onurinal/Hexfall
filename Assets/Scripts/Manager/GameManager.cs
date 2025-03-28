@@ -8,6 +8,7 @@ namespace Hexfall.Manager
 {
     public class GameManager : MonoBehaviour
     {
+        [SerializeField] private UIManager uiManager;
         [SerializeField] private CameraController cameraController;
         [SerializeField] private PlayerController playerController;
         [SerializeField] private LevelManager levelManager;
@@ -16,6 +17,7 @@ namespace Hexfall.Manager
 
         private void Start()
         {
+            uiManager.Initialize();
             levelManager.Initialize(cameraController, playerController, hexagonProperties, hexagonParent);
         }
     }

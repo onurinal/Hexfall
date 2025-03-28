@@ -119,15 +119,15 @@ namespace Hexfall.Hex
             }
         }
 
-        public void Move(Vector2 targetPosition)
+        public void Move(Vector2 targetPosition, float duration)
         {
-            moveTween = transform.DOMove(targetPosition, hexagonProperties.MoveDuration).SetEase(Ease.InSine);
+            moveTween = transform.DOMove(targetPosition, duration).SetEase(Ease.InSine);
         }
 
-        public void MoveWithNoDelay(Vector2 targetPosition)
-        {
-            transform.position = targetPosition;
-        }
+        // public void MoveWithNoDelay(Vector2 targetPosition)
+        // {
+        //     transform.position = targetPosition;
+        // }
 
         private IEnumerator RotateCoroutine(Vector3 centerPosition, Vector2 targetPosition, float angle)
         {

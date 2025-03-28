@@ -2,6 +2,7 @@
 using Hexfall.CameraManager;
 using Hexfall.Hex;
 using Hexfall.Level;
+using Hexfall.Manager;
 using Hexfall.Player;
 using UnityEngine;
 
@@ -123,7 +124,7 @@ namespace Hexfall.Grid
             swapHexagonsCoroutine = null;
         }
 
-        private IEnumerator FillHexagonEmptySlotCoroutine()
+        private IEnumerator FillHexagonEmptySlotCoroutine(float moveDuration)
         {
             var gridWidth = levelProperties.GridWidth;
             var gridHeight = levelProperties.GridHeight;
@@ -139,7 +140,7 @@ namespace Hexfall.Grid
                             if (hexagonGrid[width, i] != null)
                             {
                                 var targetPosition = gridSpawner.GetHexagonWorldPosition(width, height);
-                                hexagonGrid[width, i].Move(targetPosition);
+                                hexagonGrid[width, i].Move(targetPosition, moveDuration);
                                 hexagonGrid[width, i].SetIndices(width, height);
                                 hexagonGrid[width, height] = hexagonGrid[width, i];
                                 hexagonGrid[width, i] = null;
@@ -149,16 +150,18 @@ namespace Hexfall.Grid
                     }
                 }
 
-                yield return new WaitForSeconds(hexagonProperties.MoveDuration / 4f);
+                yield return new WaitForSeconds(moveDuration / 4f);
             }
+
+            yield return new WaitForSeconds(moveDuration - (moveDuration / 4f));
 
             fillHexagonsEmptySlotCoroutine = null;
         }
 
-        public IEnumerator StartFillHexagonEmptySlot()
+        public IEnumerator StartFillHexagonEmptySlot(float moveDuration)
         {
             if (fillHexagonsEmptySlotCoroutine != null) yield break;
-            fillHexagonsEmptySlotCoroutine = FillHexagonEmptySlotCoroutine();
+            fillHexagonsEmptySlotCoroutine = FillHexagonEmptySlotCoroutine(moveDuration);
             yield return fillHexagonsEmptySlotCoroutine;
         }
 
@@ -170,19 +173,22 @@ namespace Hexfall.Grid
             fillHexagonsEmptySlotCoroutine = null;
         }
 
-        private IEnumerator FallHexagonsCoroutine(float spawnGapBetweenColumns)
+        private IEnumerator FallHexagonsCoroutine(float moveDuration)
         {
             for (int width = 0; width < gridWidth; width++)
             {
                 for (int height = 0; height < gridHeight; height++)
                 {
                     var targetPosition = gridSpawner.GetHexagonWorldPosition(width, height);
-                    hexagonGrid[width, height].Move(targetPosition);
-                    yield return new WaitForSeconds(spawnGapBetweenColumns / 3f);
+                    hexagonGrid[width, height].Move(targetPosition, moveDuration);
+                    yield return new WaitForSeconds(moveDuration / 6f);
                 }
 
-                yield return new WaitForSeconds(spawnGapBetweenColumns / 5f);
+                yield return new WaitForSeconds(moveDuration / 10f);
             }
+
+            var gap = moveDuration / 6f + moveDuration / 10f;
+            yield return new WaitForSeconds(moveDuration - gap);
 
             fallHexagonsCoroutine = null;
         }
@@ -211,7 +217,7 @@ namespace Hexfall.Grid
                 {
                     var targetPositionX = gridSpawner.GetHexagonWorldPosition(width, height).x;
                     var targetPositionY = cameraController.GetTopLeftWorldPosition().y;
-                    hexagonGrid[width, height].MoveWithNoDelay(new Vector2(targetPositionX, targetPositionY));
+                    hexagonGrid[width, height].Move(new Vector2(targetPositionX, targetPositionY), 0f);
                 }
             }
         }

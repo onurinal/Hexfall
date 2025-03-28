@@ -1,21 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using Hexfall.Hex;
 using UnityEngine;
 
 namespace Hexfall.Manager
 {
     public static class EventManager
     {
-        // public static event Action OnSwapping;
-        // public static event Action OnSwapped;
-        //
-        // public static void StartOnSwappingEvent()
-        // {
-        //     OnSwapping?.Invoke();
-        // }
-        //
-        // public static void StartOnSwappedEvent()
-        // {
-        //     OnSwapped?.Invoke();
-        // }
+        public static Action<List<Hexagon>> OnScoreChanged;
+
+        public static void StartOnScoreChangedEvent(List<Hexagon> hexagons)
+        {
+            OnScoreChanged?.Invoke(hexagons);
+        }
     }
 }
