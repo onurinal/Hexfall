@@ -76,10 +76,11 @@ namespace Hexfall.Hex
             }
         }
 
-        public void InitializeForTest(int indexX, int indexY, HexagonColorType hexagonColorType)
+        public void InitializeForTest(int indexX, int indexY, HexagonColorType hexagonColorType, HexagonType hexagonType)
         {
             SetIndices(indexX, indexY);
             HexagonColorType = hexagonColorType;
+            HexagonType = hexagonType;
             UpdateIndexText();
 
             switch (HexagonColorType)

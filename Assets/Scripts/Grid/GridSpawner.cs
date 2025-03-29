@@ -46,7 +46,7 @@ namespace Hexfall.Grid
                 CreateHexagonsToNewGrid();
             }
 
-            gridChecker.Initialize(hexagonGrid, levelProperties);
+            gridChecker.Initialize(hexagonGrid, levelManager, levelProperties);
             gridMovement.Initialize(hexagonGrid, this, levelManager, gridChecker, levelProperties, hexagonProperties, cameraController);
         }
 

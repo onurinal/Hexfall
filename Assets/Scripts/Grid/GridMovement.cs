@@ -65,6 +65,7 @@ namespace Hexfall.Grid
                     {
                         playerHighlight.HideHighlight();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
+                        EventManager.StartOnMoveChangedEvent();
                         break;
                     }
                 }
@@ -81,6 +82,7 @@ namespace Hexfall.Grid
                     {
                         playerHighlight.HideHighlight();
                         yield return CoroutineHandler.Instance.StartCoroutine(levelManager.StartScanGrid());
+                        EventManager.StartOnMoveChangedEvent();
                         break;
                     }
                 }
@@ -126,9 +128,6 @@ namespace Hexfall.Grid
 
         private IEnumerator FillHexagonEmptySlotCoroutine(float moveDuration)
         {
-            var gridWidth = levelProperties.GridWidth;
-            var gridHeight = levelProperties.GridHeight;
-
             for (int width = 0; width < gridWidth; width++)
             {
                 for (int height = 0; height < gridHeight; height++)

@@ -1,25 +1,32 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
 using Hexfall.Hex;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Hexfall.Manager
 {
     public class ScoreManager
     {
         private TextMeshProUGUI scoreText;
+        private GameObject floatingScorePrefab;
 
         private int currentScore = 0;
 
-        public void Initialize(TextMeshProUGUI scoreText)
+        public void Initialize(TextMeshProUGUI scoreText, GameObject floatingScorePrefab)
         {
             this.scoreText = scoreText;
+            this.floatingScorePrefab = floatingScorePrefab;
         }
 
-        public void UpdateScore(List<Hexagon> hexagons)
+        public void IncreaseCurrentScore(List<Hexagon> hexagons)
         {
-            var defaultHexCounter = 0;
+            var hexCounter = 0;
             var bonusHexCounter = 0;
             var specialCounter = 0;
+
+            var centerPointOfHexagons = Vector3.zero;
 
             foreach (var hexagon in hexagons)
             {
@@ -27,11 +34,14 @@ namespace Hexfall.Manager
                 // bonus hexagons are gives double point
                 // specials are 10 point
 
-                if (hexagon.HexagonType == HexagonType.Default)
+                centerPointOfHexagons += hexagon.transform.position;
+
+                if (hexagon.HexagonType == HexagonType.Default || hexagon.HexagonType == HexagonType.Bonus)
                 {
-                    defaultHexCounter++;
+                    hexCounter++;
                 }
-                else if (hexagon.HexagonType == HexagonType.Bonus)
+
+                if (hexagon.HexagonType == HexagonType.Bonus)
                 {
                     bonusHexCounter++;
                 }
@@ -41,9 +51,18 @@ namespace Hexfall.Manager
                 }
             }
 
-            currentScore += ((defaultHexCounter * 5) + (specialCounter * 10)) + (2 * bonusHexCounter * ((defaultHexCounter * 5) + (specialCounter * 10)));
+            var bonusPoint = bonusHexCounter > 0 ? bonusHexCounter * 2 : 1;
+            var comboScore = ((hexCounter * 5) + (specialCounter * 10)) * bonusPoint;
+            currentScore += comboScore;
 
             scoreText.text = currentScore.ToString();
+
+            // show the point of these hexagons at center 
+            centerPointOfHexagons /= hexagons.Count;
+            var newFloatingText = Object.Instantiate(floatingScorePrefab, centerPointOfHexagons, Quaternion.identity);
+            var floatingText = newFloatingText.GetComponentInChildren<TextMeshProUGUI>();
+            floatingText.text = comboScore.ToString();
+            floatingText.transform.DOMove(centerPointOfHexagons + new Vector3(0f, 0.5f, 0f), 1f).OnComplete(() => Object.Destroy(newFloatingText));
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Hexfall.Grid
     {
         private const int MatchThreshold = 3;
 
+        private LevelManager levelManager;
         private Hexagon[,] hexagonGrid;
         private readonly List<Hexagon> tempMatchList = new List<Hexagon>();
         private readonly List<Hexagon> matchList = new List<Hexagon>();
@@ -30,12 +31,17 @@ namespace Hexfall.Grid
             Vertical
         }
 
-        public void Initialize(Hexagon[,] hexagonGrid, LevelProperties levelProperties)
+        public void Initialize(Hexagon[,] hexagonGrid, LevelManager levelManager, LevelProperties levelProperties)
         {
             this.hexagonGrid = hexagonGrid;
+            this.levelManager = levelManager;
 
             gridWidth = levelProperties.GridWidth;
             gridHeight = levelProperties.GridHeight;
+
+            CheckAllGrid();
+            CheckComboForBombInMatchList();
+            GetComboListInMatchList();
         }
 
         public void CheckAllGrid()
@@ -154,14 +160,26 @@ namespace Hexfall.Grid
         {
             if (matchList == null) return;
 
-            CheckComboForBombInMatchList();
-            GetComboListInMatchList();
+            if (IsGridInitializing())
+            {
+                matchComboList.Add(new List<Hexagon>());
+                foreach (var hexagon in matchList)
+                {
+                    AddToComboList(hexagon, 0);
+                }
+            }
+            else
+            {
+                CheckComboForBombInMatchList();
+                GetComboListInMatchList();
+            }
 
             if (matchComboList.Count != 0)
             {
                 for (int i = 0; i <= matchComboList.Count - 1; i++)
                 {
-                    EventManager.StartOnScoreChangedEvent(matchComboList[i]);
+                    if (!IsGridInitializing()) EventManager.StartOnScoreChangedEvent(matchComboList[i]);
+
                     foreach (var hexagon in matchComboList[i])
                     {
                         if (hexagon == null) return;
@@ -171,14 +189,6 @@ namespace Hexfall.Grid
                     }
                 }
             }
-
-            // foreach (var hexagon in matchList)
-            // {
-            //     if (hexagon == null) return;
-            //
-            //     hexagon.DestroyHexagon();
-            //     hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
-            // }
 
             matchComboList.Clear();
             matchList.Clear();
@@ -252,50 +262,59 @@ namespace Hexfall.Grid
 
             for (int i = 0; i < matchList.Count - 1; i++)
             {
-                if (IsItNeighbour(matchList[i], matchList[i + 1]))
+                if (comboCount == -1 && matchComboList.Count == 0)
+                {
+                    matchComboList.Add(new List<Hexagon>() { matchList[i] });
+                    comboCount = 0;
+                }
+
+                if (IsItNeighbour(matchList[i + 1], comboCount))
                 {
                     if (matchList[i].HexagonColorType == matchList[i + 1].HexagonColorType)
                     {
-                        if (comboCount == -1 && matchComboList.Count == 0)
-                        {
-                            matchComboList.Add(new List<Hexagon>());
-                            comboCount++;
-                        }
-
-                        // Add to the current combo
-                        if (!matchComboList[comboCount].Contains(matchList[i]))
-                        {
-                            matchComboList[comboCount].Add(matchList[i]);
-                        }
-
-                        // make sure to add last element in combo
-                        if (!matchComboList[comboCount].Contains(matchList[i + 1]))
-                        {
-                            matchComboList[comboCount].Add(matchList[i + 1]);
-                        }
+                        AddToComboList(matchList[i], comboCount);
+                        AddToComboList(matchList[i + 1], comboCount);
                     }
                 }
                 else
                 {
-                    matchComboList.Add(new List<Hexagon>());
+                    matchComboList.Add(new List<Hexagon>() { matchList[i + 1] });
                     comboCount++;
                 }
             }
         }
 
-        private bool IsItNeighbour(Hexagon first, Hexagon second)
+        private bool IsItNeighbour(Hexagon second, int comboCount)
         {
-            var rowType = first.IndexX % 2;
             var secondIndices = new Vector2Int(second.IndexX, second.IndexY);
 
-            foreach (var offset in neighbourOffsets[rowType])
+            foreach (var hexagon in matchComboList[comboCount])
             {
-                var neighbour = new Vector2Int(first.IndexX + offset.x, first.IndexY + offset.y);
-                if (secondIndices.Equals(neighbour))
+                var rowType = hexagon.IndexX % 2;
+                foreach (var newOffset in neighbourOffsets[rowType])
                 {
-                    return true;
+                    var neighbour = new Vector2Int(hexagon.IndexX + newOffset.x, hexagon.IndexY + newOffset.y);
+                    if (IsIndicesWithinBounds(neighbour.x, neighbour.y) && secondIndices.Equals(neighbour))
+                    {
+                        return true;
+                    }
                 }
             }
+
+            return false;
+        }
+
+        private void AddToComboList(Hexagon hexagon, int comboCount)
+        {
+            if (comboCount >= 0 && !matchComboList[comboCount].Contains(hexagon))
+            {
+                matchComboList[comboCount].Add(hexagon);
+            }
+        }
+
+        private bool IsIndicesWithinBounds(int x, int y)
+        {
+            if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) return true;
 
             return false;
         }
@@ -304,6 +323,12 @@ namespace Hexfall.Grid
         {
             CheckAllGrid();
             return matchList.Count;
+        }
+
+        private bool IsGridInitializing()
+        {
+            if (levelManager.IsGridInitializing) return true;
+            return false;
         }
     }
 }
