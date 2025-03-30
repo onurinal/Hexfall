@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Hexfall.Hex;
 using Hexfall.Manager;
 using UnityEngine;
@@ -48,7 +49,8 @@ namespace Hexfall.Player
 
         private float GetNewXPosition(float centerPosX, int angle)
         {
-            var shouldFlip = angle == 0 || angle == 120 || angle == 240;
+            var tolerance = 5f;
+            var shouldFlip = Mathf.Abs(angle - 0) < tolerance || Math.Abs(angle - 120) < tolerance || Math.Abs(angle - 240) < tolerance;
             groupHighlightSprite.flipX = shouldFlip;
             return centerPosX + (shouldFlip ? xOffset : -xOffset);
         }

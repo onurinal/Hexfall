@@ -163,7 +163,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -1.7241268, y: -0.84470594, z: -1.7588394, w: -1.0529906}
+  m_margin: {x: -1.7241268, y: -1.6232047, z: -0.82719207, w: -1.3848104}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -182,7 +182,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 20
   m_SortAtRoot: 0
 --- !u!1 &5701412456962410699
 GameObject:
@@ -209,7 +209,7 @@ Transform:
   m_GameObject: {fileID: 5701412456962410699}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.042, y: -0.005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -290,7 +290,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 318afa4d9ed54eb479911b281c170055, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ae65aec387accce4d9d043155da57411, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -333,9 +333,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.017165363}
+  m_Offset: {x: -0.011160493, y: -0.008293867}
   serializedVersion: 2
-  m_Radius: 0.30102777
+  m_Radius: 0.29058444
 --- !u!1 &9185349995834491658
 GameObject:
   m_ObjectHideFlags: 0

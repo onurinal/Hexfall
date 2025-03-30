@@ -17,6 +17,8 @@ namespace Hexfall.Manager
 
         private void Start()
         {
+            Application.targetFrameRate = 120;
+
             uiManager.Initialize(hexagonProperties.DestroyDuration);
             levelManager.Initialize(cameraController, playerController, hexagonProperties, hexagonParent);
         }

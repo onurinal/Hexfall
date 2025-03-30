@@ -8,8 +8,8 @@ namespace Hexfall.Player
         public Vector2 CurrentMousePosition { get; private set; }
         public Vector2 CurrentTouchPosition { get; private set; }
 
-        public Vector2 FirstMousePosition { get; set; }
-        public Vector2 FirstTouchPosition { get; set; }
+        public Vector2 FirstMousePosition { get; private set; }
+        public Vector2 FirstTouchPosition { get; private set; }
 
         private Camera mainCamera;
 
@@ -27,9 +27,19 @@ namespace Hexfall.Player
             if (Input.touchCount > 0)
             {
                 var touch = Input.GetTouch(0);
-                CurrentTouchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+                CurrentTouchPosition = mainCamera.ScreenToWorldPoint(touch.position);
             }
 #endif
+        }
+
+        public void SetFirstMousePosition(Vector2 position)
+        {
+            FirstMousePosition = position;
+        }
+
+        public void SetFirstTouchPosition(Vector2 position)
+        {
+            FirstTouchPosition = position;
         }
     }
 }

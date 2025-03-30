@@ -20,8 +20,6 @@ namespace Hexfall.Hex
         [field: SerializeField] public int IndexX { get; private set; }
         [field: SerializeField] public int IndexY { get; private set; }
 
-        [SerializeField] private TextMeshProUGUI indexText;
-
         private Tween moveTween;
         private Tween rotateTween;
         private Tween destroyTween;
@@ -44,8 +42,6 @@ namespace Hexfall.Hex
         {
             SetIndices(indexX, indexY);
             HexagonType = hexagonType;
-            UpdateIndexText();
-
             if (HexagonType == HexagonType.Bonus)
             {
                 ActiveBonusSprite();
@@ -81,7 +77,6 @@ namespace Hexfall.Hex
             SetIndices(indexX, indexY);
             HexagonColorType = hexagonColorType;
             HexagonType = hexagonType;
-            UpdateIndexText();
 
             switch (HexagonColorType)
             {
@@ -111,24 +106,10 @@ namespace Hexfall.Hex
             bonusSprite.gameObject.SetActive(true);
         }
 
-        public void UpdateIndexText()
-        {
-            if (indexText != null)
-            {
-                indexText.transform.position = hexSprite.bounds.center;
-                indexText.text = IndexX + "," + IndexY;
-            }
-        }
-
         public void Move(Vector2 targetPosition, float duration)
         {
             moveTween = transform.DOMove(targetPosition, duration).SetEase(Ease.InSine);
         }
-
-        // public void MoveWithNoDelay(Vector2 targetPosition)
-        // {
-        //     transform.position = targetPosition;
-        // }
 
         private IEnumerator RotateCoroutine(Vector3 centerPosition, Vector2 targetPosition, float angle)
         {
@@ -195,8 +176,6 @@ namespace Hexfall.Hex
         {
             IndexX = indexX;
             IndexY = indexY;
-
-            UpdateIndexText();
         }
     }
 }

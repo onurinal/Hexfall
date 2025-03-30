@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4654828468664123464}
   - component: {fileID: 4601287034773024166}
   m_Layer: 0
-  m_Name: Default Hexagon
+  m_Name: Hexagon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,6 @@ MonoBehaviour:
   <HexagonColorType>k__BackingField: 0
   <IndexX>k__BackingField: 0
   <IndexY>k__BackingField: 0
-  indexText: {fileID: 0}
 --- !u!1 &3549596139100196778
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +129,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: c3ba6d454b632dd41847119835d8b4a7, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.6}
   m_FlipX: 0
@@ -217,7 +216,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 1902c1a4bb13a9941b40e776bee3d0c7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 27e559ddb24b0d0499d4b47ebcdef229, type: 3}
   m_Color: {r: 0.6528301, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -264,7 +263,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.73142856, y: 0.73142856}
+    oldSize: {x: 0.864, y: 0.768}
     newSize: {x: 2.56, y: 2.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -272,10 +271,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.18206641, y: 0.31535313}
-      - {x: -0.3647671, y: 0.00004070322}
-      - {x: -0.18460478, y: -0.3149662}
-      - {x: 0.18441513, y: -0.31445554}
-      - {x: 0.3639029, y: 0.0005086139}
-      - {x: 0.18513994, y: 0.31475967}
+    - - {x: -0.1817598, y: 0.29451793}
+      - {x: -0.36358526, y: -0.00468658}
+      - {x: -0.18933207, y: -0.30152863}
+      - {x: 0.18441513, y: -0.3014556}
+      - {x: 0.36539134, y: -0.0024682954}
+      - {x: 0.1838272, y: 0.29615715}
   m_UseDelaunayMesh: 0

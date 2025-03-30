@@ -75,9 +75,10 @@ namespace Hexfall.Player
 
         private Vector2 GetInputPosition()
         {
+#if UNITY_EDITOR
             if (Input.GetMouseButtonDown(0))
             {
-                playerInput.FirstMousePosition = playerInput.CurrentMousePosition;
+                playerInput.SetFirstMousePosition(playerInput.CurrentMousePosition);
                 return playerInput.FirstMousePosition;
             }
 
@@ -91,7 +92,7 @@ namespace Hexfall.Player
                 Vector2 delta = playerInput.CurrentMousePosition - playerInput.FirstMousePosition;
 
                 // if player move the input after select hex then don't allow to select again
-                if (delta.magnitude < 0.1f && !isSwapping)
+                if (delta.magnitude < SwapThreshold && !isSwapping)
                 {
                     canSelectHex = true;
                     return playerInput.CurrentMousePosition;
@@ -99,10 +100,39 @@ namespace Hexfall.Player
                 else
                 {
                     canSwap = true;
-                    return Vector2.zero;
                 }
             }
-
+#elif UNITY_ANDROID
+            if (Input.touchCount > 0)
+            {
+                var touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Began)
+                {
+                    playerInput.SetFirstTouchPosition(playerInput.CurrentTouchPosition);
+                    return playerInput.FirstTouchPosition;
+                }
+            
+                if (touch.phase == TouchPhase.Moved)
+                {
+                    return playerInput.CurrentTouchPosition;
+                }
+            
+                if (touch.phase == TouchPhase.Ended)
+                {
+                    Vector2 delta = playerInput.CurrentTouchPosition - playerInput.FirstTouchPosition;
+            
+                    if (delta.magnitude < SwapThreshold && !isSwapping)
+                    {
+                        canSelectHex = true;
+                        return playerInput.CurrentTouchPosition;
+                    }
+                    else
+                    {
+                        canSwap = true;
+                    }
+                }
+            }
+#endif
             return Vector2.zero;
         }
 
@@ -146,7 +176,11 @@ namespace Hexfall.Player
 
         private Vector2 GetMovementDirection(Vector2 currentInputPosition)
         {
+#if UNITY_EDITOR
             var delta = currentInputPosition - playerInput.FirstMousePosition;
+#elif UNITY_ANDROID
+            var delta = currentInputPosition - playerInput.FirstTouchPosition;
+#endif
 
             if (delta.magnitude < SwapThreshold) return Vector2.zero;
 
