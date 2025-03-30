@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hexfall.Hex;
-using UnityEngine;
 
 namespace Hexfall.Manager
 {
@@ -9,6 +8,7 @@ namespace Hexfall.Manager
     {
         public static Action<List<Hexagon>> OnScoreChanged;
         public static Action OnMoveChanged;
+        public static Action OnGameOver;
 
         public static void StartOnScoreChangedEvent(List<Hexagon> hexagons)
         {
@@ -18,6 +18,11 @@ namespace Hexfall.Manager
         public static void StartOnMoveChangedEvent()
         {
             OnMoveChanged?.Invoke();
+        }
+
+        public static void StartOnGameOverEvent()
+        {
+            OnGameOver?.Invoke();
         }
     }
 }

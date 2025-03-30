@@ -176,9 +176,9 @@ namespace Hexfall.Hex
             hexagonProperties.SetScaleFactorX(scaleFactorX, scaleFactorY);
         }
 
-        public void DestroyHexagon()
+        public void DestroyHexagon(float duration)
         {
-            destroyTween = transform.DOScale(new Vector2(0f, 0f), hexagonProperties.DestroyDuration).SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
+            destroyTween = transform.DOScale(new Vector2(0f, 0f), duration).SetEase(Ease.InOutBounce).OnComplete(() => Destroy(gameObject));
         }
 
         public void HideHexagon()

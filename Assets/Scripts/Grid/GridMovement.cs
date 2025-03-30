@@ -88,7 +88,6 @@ namespace Hexfall.Grid
                 }
             }
 
-            playerHighlight.ShowHighlight();
             swapHexagonsCoroutine = null;
         }
 
@@ -218,6 +217,14 @@ namespace Hexfall.Grid
                     var targetPositionY = cameraController.GetTopLeftWorldPosition().y;
                     hexagonGrid[width, height].Move(new Vector2(targetPositionX, targetPositionY), 0f);
                 }
+            }
+        }
+
+        public void DestroyAllHexagonsWhenCountdownOver()
+        {
+            foreach (var hexagon in hexagonGrid)
+            {
+                hexagon.DestroyHexagon(hexagonProperties.DestroyDuration);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Hexfall.CameraManager;
 using Hexfall.Grid;
 using Hexfall.Hex;
@@ -32,16 +33,25 @@ namespace Hexfall.Manager
             gridSpawner.Initialize(this, gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
             playerController.Initialize(gridSpawner, gridMovement, levelProperties, hexagonProperties);
 
+            EventManager.OnGameOver += gridMovement.DestroyAllHexagonsWhenCountdownOver;
+
             StartNewLevelCoroutine();
+        }
+
+        private void OnDestroy()
+        {
+            EventManager.OnGameOver -= gridMovement.DestroyAllHexagonsWhenCountdownOver;
         }
 
         private IEnumerator ScanGridCoroutine()
         {
             var moveDuration = IsGridInitializing ? 0 : hexagonProperties.MoveDuration;
+            var destroyDuration = IsGridInitializing ? 0 : hexagonProperties.DestroyDuration;
             do
             {
                 gridChecker.CheckAllGrid();
-                gridChecker.DestroyHexagonInMatchList();
+                gridChecker.DestroyHexagonInMatchList(destroyDuration);
+                yield return new WaitForSeconds(destroyDuration);
                 yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartFillHexagonEmptySlot(moveDuration));
                 yield return CoroutineHandler.Instance.StartCoroutine(gridSpawner.StartCreateNewHexagonToEmptySlot(moveDuration));
                 gridChecker.CheckAllGrid();

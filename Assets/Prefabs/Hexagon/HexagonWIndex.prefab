@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4654828468664123464}
   - component: {fileID: 4601287034773024166}
   m_Layer: 0
-  m_Name: Back Up Hexagon Prefab
+  m_Name: HexagonWIndex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

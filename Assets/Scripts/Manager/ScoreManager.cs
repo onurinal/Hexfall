@@ -10,11 +10,11 @@ namespace Hexfall.Manager
     public class ScoreManager
     {
         private TextMeshProUGUI scoreText;
-        private GameObject floatingScorePrefab;
+        private Transform floatingScorePrefab;
 
         private int currentScore = 0;
 
-        public void Initialize(TextMeshProUGUI scoreText, GameObject floatingScorePrefab)
+        public void Initialize(TextMeshProUGUI scoreText, Transform floatingScorePrefab)
         {
             this.scoreText = scoreText;
             this.floatingScorePrefab = floatingScorePrefab;
@@ -60,9 +60,9 @@ namespace Hexfall.Manager
             // show the point of these hexagons at center 
             centerPointOfHexagons /= hexagons.Count;
             var newFloatingText = Object.Instantiate(floatingScorePrefab, centerPointOfHexagons, Quaternion.identity);
-            var floatingText = newFloatingText.GetComponentInChildren<TextMeshProUGUI>();
+            var floatingText = newFloatingText.GetComponentInChildren<TextMeshPro>();
             floatingText.text = comboScore.ToString();
-            floatingText.transform.DOMove(centerPointOfHexagons + new Vector3(0f, 0.5f, 0f), 1f).OnComplete(() => Object.Destroy(newFloatingText));
+            Object.Destroy(newFloatingText.gameObject, 1f);
         }
     }
 }

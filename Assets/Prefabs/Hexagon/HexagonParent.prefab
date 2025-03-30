@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2084009719523728292}
   m_Layer: 0
-  m_Name: Hexagons
+  m_Name: HexagonParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

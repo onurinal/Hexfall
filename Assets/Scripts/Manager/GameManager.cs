@@ -17,7 +17,7 @@ namespace Hexfall.Manager
 
         private void Start()
         {
-            uiManager.Initialize();
+            uiManager.Initialize(hexagonProperties.DestroyDuration);
             levelManager.Initialize(cameraController, playerController, hexagonProperties, hexagonParent);
         }
     }

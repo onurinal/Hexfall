@@ -41,12 +41,12 @@ namespace Hexfall.Player
             gridWidth = levelProperties.GridWidth;
             gridHeight = levelProperties.GridHeight;
 
-            // EventManager.OnSwapped += RestorePreviousHexagons;
+            EventManager.OnGameOver += StopSwap;
         }
 
         private void OnDestroy()
         {
-            // EventManager.OnSwapped -= RestorePreviousHexagons;
+            EventManager.OnGameOver -= StopSwap;
         }
 
         public void HandleHexagonSelect()
@@ -126,6 +126,7 @@ namespace Hexfall.Player
             yield return new WaitForSeconds(0.1f);
             isSwapping = false;
             RestorePreviousHexagons();
+            playerHighlight.ShowHighlight();
             swapCoroutine = null;
         }
 

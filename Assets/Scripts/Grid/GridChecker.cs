@@ -156,7 +156,7 @@ namespace Hexfall.Grid
             }
         }
 
-        public void DestroyHexagonInMatchList()
+        public void DestroyHexagonInMatchList(float duration)
         {
             if (matchList == null) return;
 
@@ -184,7 +184,7 @@ namespace Hexfall.Grid
                     {
                         if (hexagon == null) return;
 
-                        hexagon.DestroyHexagon();
+                        hexagon.DestroyHexagon(duration);
                         hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
                     }
                 }
