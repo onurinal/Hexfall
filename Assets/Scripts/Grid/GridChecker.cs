@@ -299,7 +299,10 @@ namespace Hexfall.Grid
                     var neighbour = new Vector2Int(hexagon.IndexX + newOffset.x, hexagon.IndexY + newOffset.y);
                     if (IsIndicesWithinBounds(neighbour.x, neighbour.y) && secondIndices.Equals(neighbour))
                     {
-                        return true;
+                        if (hexagon.HexagonColorType == second.HexagonColorType)
+                        {
+                            return true;
+                        }
                     }
                 }
             }

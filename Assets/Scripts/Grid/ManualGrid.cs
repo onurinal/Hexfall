@@ -9,7 +9,7 @@ namespace Hexfall.Grid
         private HexagonProperties hexagonProperties;
         private GridSpawner gridSpawner;
 
-        public readonly bool IsTesting = false;
+        public readonly bool IsTesting = true;
 
         public void Initialize(Hexagon[,] hexagonGrid, HexagonProperties hexagonProperties, GridSpawner gridSpawner)
         {
@@ -22,8 +22,8 @@ namespace Hexfall.Grid
 
         private void CreateNewHexagonsToGrid()
         {
-            hexagonGrid[0, 0] = CreateNewHexagon(0, 0, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[1, 0] = CreateNewHexagon(1, 0, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[0, 0] = CreateNewHexagon(0, 0, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[1, 0] = CreateNewHexagon(1, 0, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 0] = CreateNewHexagon(2, 0, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[3, 0] = CreateNewHexagon(3, 0, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[4, 0] = CreateNewHexagon(4, 0, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
@@ -31,7 +31,7 @@ namespace Hexfall.Grid
             hexagonGrid[6, 0] = CreateNewHexagon(6, 0, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[7, 0] = CreateNewHexagon(7, 0, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
 
-            hexagonGrid[0, 1] = CreateNewHexagon(0, 1, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[0, 1] = CreateNewHexagon(0, 1, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[1, 1] = CreateNewHexagon(1, 1, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 1] = CreateNewHexagon(2, 1, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[3, 1] = CreateNewHexagon(3, 1, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
@@ -62,35 +62,35 @@ namespace Hexfall.Grid
             hexagonGrid[1, 4] = CreateNewHexagon(1, 4, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 4] = CreateNewHexagon(2, 4, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[3, 4] = CreateNewHexagon(3, 4, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[4, 4] = CreateNewHexagon(4, 4, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[5, 4] = CreateNewHexagon(5, 4, HexagonColorType.Purple, hexagonProperties.BombHexagon, HexagonType.Special);
+            hexagonGrid[4, 4] = CreateNewHexagon(4, 4, HexagonColorType.Green, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[5, 4] = CreateNewHexagon(5, 4, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[6, 4] = CreateNewHexagon(6, 4, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[7, 4] = CreateNewHexagon(7, 4, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
 
             hexagonGrid[0, 5] = CreateNewHexagon(0, 5, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[1, 5] = CreateNewHexagon(1, 5, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 5] = CreateNewHexagon(2, 5, HexagonColorType.Green, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[3, 5] = CreateNewHexagon(3, 5, HexagonColorType.Blue, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[4, 5] = CreateNewHexagon(4, 5, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[5, 5] = CreateNewHexagon(5, 5, HexagonColorType.Blue, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[3, 5] = CreateNewHexagon(3, 5, HexagonColorType.Green, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[4, 5] = CreateNewHexagon(4, 5, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[5, 5] = CreateNewHexagon(5, 5, HexagonColorType.Green, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[6, 5] = CreateNewHexagon(6, 5, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[7, 5] = CreateNewHexagon(7, 5, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
 
             hexagonGrid[0, 6] = CreateNewHexagon(0, 6, HexagonColorType.Blue, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[1, 6] = CreateNewHexagon(1, 6, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 6] = CreateNewHexagon(2, 6, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[3, 6] = CreateNewHexagon(3, 6, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[3, 6] = CreateNewHexagon(3, 6, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[4, 6] = CreateNewHexagon(4, 6, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[5, 6] = CreateNewHexagon(5, 6, HexagonColorType.Green, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[5, 6] = CreateNewHexagon(5, 6, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[6, 6] = CreateNewHexagon(6, 6, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[7, 6] = CreateNewHexagon(7, 6, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
 
             hexagonGrid[0, 7] = CreateNewHexagon(0, 7, HexagonColorType.Purple, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[1, 7] = CreateNewHexagon(1, 7, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[2, 7] = CreateNewHexagon(2, 7, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[3, 7] = CreateNewHexagon(3, 7, HexagonColorType.Cyan, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[3, 7] = CreateNewHexagon(3, 7, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[4, 7] = CreateNewHexagon(4, 7, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
-            hexagonGrid[5, 7] = CreateNewHexagon(5, 7, HexagonColorType.Red, hexagonProperties.DefaultHexagon, HexagonType.Default);
+            hexagonGrid[5, 7] = CreateNewHexagon(5, 7, HexagonColorType.Yellow, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[6, 7] = CreateNewHexagon(6, 7, HexagonColorType.Blue, hexagonProperties.DefaultHexagon, HexagonType.Default);
             hexagonGrid[7, 7] = CreateNewHexagon(7, 7, HexagonColorType.Blue, hexagonProperties.DefaultHexagon, HexagonType.Default);
 

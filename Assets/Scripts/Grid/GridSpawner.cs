@@ -22,7 +22,8 @@ namespace Hexfall.Grid
         // for testing
         private ManualGrid manualGrid;
 
-        public void Initialize(LevelManager levelManager, GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties, Transform hexagonParent,
+        public void Initialize(LevelManager levelManager, GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties,
+            Transform hexagonParent,
             CameraController cameraController)
         {
             this.levelManager = levelManager;
