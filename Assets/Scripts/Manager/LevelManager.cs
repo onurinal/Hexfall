@@ -31,7 +31,7 @@ namespace Hexfall.Manager
             gridChecker = new GridChecker();
             gridMovement = new GridMovement();
             gridSpawner.Initialize(this, gridChecker, gridMovement, levelProperties, hexagonProperties, hexagonParent, cameraController);
-            playerController.Initialize(gridSpawner, gridMovement, levelProperties, hexagonProperties);
+            playerController.Initialize(this, gridSpawner, gridMovement, levelProperties, hexagonProperties);
 
             EventManager.OnGameOver += gridMovement.DestroyAllHexagonsWhenCountdownOver;
 
@@ -82,8 +82,9 @@ namespace Hexfall.Manager
             gridSpawner.HideAllHexagons();
             yield return CoroutineHandler.Instance.StartCoroutine(StartScanGrid());
             gridMovement.MoveAllHexagonsToTheTop();
-            yield return gridMovement.StartFallHexagonsCoroutine(hexagonProperties.MoveDuration);
+            yield return null;
             gridSpawner.ShowAllHexagons();
+            yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartFallHexagonsCoroutine(hexagonProperties.MoveDuration));
             IsGridInitializing = false;
             newLevelCoroutine = null;
         }

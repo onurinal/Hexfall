@@ -1,6 +1,7 @@
 ﻿using Hexfall.Grid;
 using Hexfall.Hex;
 using Hexfall.Level;
+using Hexfall.Manager;
 using UnityEngine;
 
 namespace Hexfall.Player
@@ -12,11 +13,13 @@ namespace Hexfall.Player
         [SerializeField] private PlayerMovement playerMovement;
 
         private HexagonProperties hexagonProperties;
+        private LevelManager levelManager;
 
         // private int gridWidth, gridHeight;
 
-        public void Initialize(GridSpawner gridSpawner, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties)
+        public void Initialize(LevelManager levelManager, GridSpawner gridSpawner, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties)
         {
+            this.levelManager = levelManager;
             this.hexagonProperties = hexagonProperties;
 
             playerInput.Initialize();
@@ -28,6 +31,8 @@ namespace Hexfall.Player
 
         private void Update()
         {
+            if (levelManager.IsGridInitializing) return;
+
             playerInput.UpdatePlayerInput();
             playerMovement.HandleHexagonSelect();
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using Hexfall.Hex;
-using Hexfall.Manager;
 using UnityEngine;
 
 namespace Hexfall.Player

@@ -25,7 +25,8 @@ namespace Hexfall.Grid
 
         private int gridWidth, gridHeight;
 
-        public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelManager levelManager, GridChecker gridChecker, LevelProperties levelProperties, HexagonProperties hexagonProperties,
+        public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelManager levelManager, GridChecker gridChecker, LevelProperties levelProperties,
+            HexagonProperties hexagonProperties,
             CameraController cameraController)
         {
             this.hexagonGrid = hexagonGrid;
@@ -70,7 +71,8 @@ namespace Hexfall.Grid
                     }
                 }
             }
-            else if ((isInputLeftSide && moveDirection == Vector2.down) || (isInputTopSide && moveDirection == Vector2.left) || (!isInputTopSide && moveDirection == Vector2.right) ||
+            else if ((isInputLeftSide && moveDirection == Vector2.down) || (isInputTopSide && moveDirection == Vector2.left) ||
+                     (!isInputTopSide && moveDirection == Vector2.right) ||
                      (!isInputLeftSide && moveDirection == Vector2.up))
             {
                 for (int i = 0; i < 3; i++)
@@ -196,7 +198,7 @@ namespace Hexfall.Grid
             if (fallHexagonsCoroutine != null) yield break;
 
             fallHexagonsCoroutine = FallHexagonsCoroutine(spawnGapBetweenColumns);
-            CoroutineHandler.Instance.StartCoroutine(fallHexagonsCoroutine);
+            yield return fallHexagonsCoroutine;
         }
 
         private IEnumerator StopFallHexagonsCoroutine()

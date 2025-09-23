@@ -178,7 +178,10 @@ namespace Hexfall.Grid
             {
                 for (int i = 0; i <= matchComboList.Count - 1; i++)
                 {
-                    if (!IsGridInitializing()) EventManager.StartOnScoreChangedEvent(matchComboList[i]);
+                    if (!IsGridInitializing())
+                    {
+                        EventManager.StartOnScoreChangedEvent(matchComboList[i]);
+                    }
 
                     foreach (var hexagon in matchComboList[i])
                     {

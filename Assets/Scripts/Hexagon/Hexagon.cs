@@ -21,7 +21,6 @@ namespace Hexfall.Hex
         [field: SerializeField] public int IndexY { get; private set; }
 
         private Tween moveTween;
-        private Tween rotateTween;
         private Tween destroyTween;
         private IEnumerator rotateCoroutine;
 
