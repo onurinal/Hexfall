@@ -55,7 +55,7 @@ namespace Hexfall.Manager
                 yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartFillHexagonEmptySlot(moveDuration));
                 yield return CoroutineHandler.Instance.StartCoroutine(gridSpawner.StartCreateNewHexagonToEmptySlot(moveDuration));
                 gridChecker.CheckAllGrid();
-            } while (gridChecker.GetMatchListCount() > 0); // Debug.Log("Checking all grid");
+            } while (gridChecker.GetMatchListCount() > 0);
 
             scanGridCoroutine = null;
         }

@@ -23,6 +23,7 @@ namespace Hexfall.Player
         private bool isSwapping;
         private bool canSwap = true;
         private IEnumerator swapCoroutine;
+
         private readonly Vector2Int[][] neighbourOffsets = new Vector2Int[][]
         {
             new Vector2Int[] { new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, 0), new(1, 1), }, // for even rows
@@ -151,8 +152,8 @@ namespace Hexfall.Player
 
         private IEnumerator SwapCoroutine(Vector2 direction, Vector2 currentInputPosition)
         {
-            SavePreviousHexagonAxisAfterSwapped();
-            yield return gridMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction, currentInputPosition);
+            SavePreviousHexagonAxisBeforeSwap();
+            yield return CoroutineHandler.Instance.StartCoroutine(gridMovement.StartSwapHexagons(firstHexagon, secondHexagon, thirdHexagon, direction, currentInputPosition));
             yield return new WaitForSeconds(0.1f);
             isSwapping = false;
             RestorePreviousHexagons();
@@ -212,8 +213,6 @@ namespace Hexfall.Player
             var (secondHexAxis, thirdHexAxis) = FindTwoClosestNeighbours(neighbours, inputAngle);
             secondHexagon = gridSpawner.GetHexagonAtAxis(secondHexAxis.x, secondHexAxis.y);
             thirdHexagon = gridSpawner.GetHexagonAtAxis(thirdHexAxis.x, thirdHexAxis.y);
-
-            // Debug.Log($"firstHexagonAxis : {firstHexagon.IndexX}, {firstHexagon.IndexY} secondHexAxis : {secondHexAxis.x}, {secondHexAxis.y} thirdHexAxis : {thirdHexAxis.x}, {thirdHexAxis.y}");
 
             if (secondHexagon != null && thirdHexagon != null)
             {
@@ -327,7 +326,7 @@ namespace Hexfall.Player
             thirdHexagon = gridSpawner.GetHexagonAtAxis(thirdHexagonAxis.x, thirdHexagonAxis.y);
         }
 
-        private void SavePreviousHexagonAxisAfterSwapped()
+        private void SavePreviousHexagonAxisBeforeSwap()
         {
             firstHexagonAxis = new Vector2Int(firstHexagon.IndexX, firstHexagon.IndexY);
             secondHexagonAxis = new Vector2Int(secondHexagon.IndexX, secondHexagon.IndexY);

@@ -15,8 +15,6 @@ namespace Hexfall.Player
         private HexagonProperties hexagonProperties;
         private LevelManager levelManager;
 
-        // private int gridWidth, gridHeight;
-
         public void Initialize(LevelManager levelManager, GridSpawner gridSpawner, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties)
         {
             this.levelManager = levelManager;

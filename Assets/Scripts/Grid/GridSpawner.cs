@@ -23,8 +23,8 @@ namespace Hexfall.Grid
         private ManualGrid manualGrid;
 
         public void Initialize(LevelManager levelManager, GridChecker gridChecker, GridMovement gridMovement, LevelProperties levelProperties, HexagonProperties hexagonProperties,
-            Transform hexagonParent,
-            CameraController cameraController)
+        Transform hexagonParent,
+        CameraController cameraController)
         {
             this.levelManager = levelManager;
             this.hexagonProperties = hexagonProperties;
@@ -86,7 +86,7 @@ namespace Hexfall.Grid
         private Hexagon CreateNewHexagon(int width, int height, Vector2 position)
         {
             var hexagonType = TryToGetOtherThanDefaultHexagon();
-            Hexagon hexagon = hexagonType == HexagonType.Special ? hexagonProperties.BombHexagon : hexagonProperties.DefaultHexagon;
+            Hexagon hexagon = hexagonType == HexagonType.Special ? hexagonProperties.BombHexagonPrefab : hexagonProperties.DefaultHexagonPrefab;
 
             var newHex = Object.Instantiate(hexagon, position, Quaternion.identity, hexagonParent);
             newHex.Initialize(width, height, hexagonType);

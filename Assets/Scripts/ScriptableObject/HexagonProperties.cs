@@ -6,8 +6,8 @@ namespace Hexfall.Hex
     public class HexagonProperties : ScriptableObject
     {
         [Header("Hexagon Type")]
-        [SerializeField] private Hexagon defaultHexagon;
-        [SerializeField] private Hexagon bombHexagon;
+        [SerializeField] private Hexagon defaultHexagonPrefab;
+        [SerializeField] private Hexagon bombHexagonPrefab;
 
         [Header("Hexagon Duration")]
         [SerializeField] private float moveDuration;
@@ -26,8 +26,8 @@ namespace Hexfall.Hex
         [field: SerializeField] public float ScaleFactorX { get; private set; } = 0.48f;
         [field: SerializeField] public float ScaleFactorY { get; private set; } = 0.32f;
 
-        public Hexagon DefaultHexagon => defaultHexagon;
-        public Hexagon BombHexagon => bombHexagon;
+        public Hexagon DefaultHexagonPrefab => defaultHexagonPrefab;
+        public Hexagon BombHexagonPrefab => bombHexagonPrefab;
         public float MoveDuration => moveDuration;
         public float DestroyDuration => destroyDuration;
         public float RotationAngle => rotationAngle;

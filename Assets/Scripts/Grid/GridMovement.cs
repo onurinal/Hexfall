@@ -26,8 +26,8 @@ namespace Hexfall.Grid
         private int gridWidth, gridHeight;
 
         public void Initialize(Hexagon[,] hexagonGrid, GridSpawner gridSpawner, LevelManager levelManager, GridChecker gridChecker, LevelProperties levelProperties,
-            HexagonProperties hexagonProperties,
-            CameraController cameraController)
+        HexagonProperties hexagonProperties,
+        CameraController cameraController)
         {
             this.hexagonGrid = hexagonGrid;
             this.gridSpawner = gridSpawner;
@@ -117,7 +117,7 @@ namespace Hexfall.Grid
         {
             if (swapHexagonsCoroutine != null) yield break;
             swapHexagonsCoroutine = SwapHexagonsCoroutine(firstHex, secondHex, thirdHex, moveDirection, currentInputPosition);
-            yield return CoroutineHandler.Instance.StartCoroutine(swapHexagonsCoroutine);
+            yield return swapHexagonsCoroutine;
         }
 
         public void StopSwapHexagons()

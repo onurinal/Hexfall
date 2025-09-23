@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using DG.Tweening;
 using Hexfall.Hex;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Hexfall.Manager
@@ -56,9 +54,8 @@ namespace Hexfall.Manager
             currentScore += comboScore;
 
             scoreText.text = currentScore.ToString();
-
-            // show the point of these hexagons at center 
-            centerPointOfHexagons /= hexagons.Count;
+            
+            centerPointOfHexagons /= hexagons.Count; // show the score text at the center of these hexagons  
             var newFloatingText = Object.Instantiate(floatingScorePrefab, centerPointOfHexagons, Quaternion.identity);
             var floatingText = newFloatingText.GetComponentInChildren<TextMeshPro>();
             floatingText.text = comboScore.ToString();
