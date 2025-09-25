@@ -1,4 +1,4 @@
 * Hexfall
 
-(https://github.com/onurinal/Hexfall/blob/develop/HexfallGameplay.gif)
+<img src="./HexfallGameplay.gif"/>
 
