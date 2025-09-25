@@ -37,10 +37,6 @@ namespace Hexfall.Grid
 
             gridWidth = levelProperties.GridWidth;
             gridHeight = levelProperties.GridHeight;
-
-            CheckAllGrid();
-            CheckComboForBombInMatchList();
-            GetComboListInMatchList();
         }
 
         public void CheckAllGrid()
@@ -161,33 +157,35 @@ namespace Hexfall.Grid
 
             if (IsGridInitializing())
             {
-                matchComboList.Add(new List<Hexagon>());
                 foreach (var hexagon in matchList)
                 {
-                    AddToComboList(hexagon, 0);
+                    if (hexagon == null) return;
+
+                    hexagon.DestroyHexagon(duration);
+                    hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
                 }
             }
             else
             {
                 CheckComboForBombInMatchList();
                 GetComboListInMatchList();
-            }
 
-            if (matchComboList.Count != 0)
-            {
-                for (int i = 0; i <= matchComboList.Count - 1; i++)
+                if (matchComboList.Count != 0)
                 {
-                    if (!IsGridInitializing())
+                    for (int i = 0; i <= matchComboList.Count - 1; i++)
                     {
-                        EventManager.StartOnScoreChangedEvent(matchComboList[i]);
-                    }
+                        if (!IsGridInitializing())
+                        {
+                            EventManager.StartOnScoreChangedEvent(matchComboList[i]);
+                        }
 
-                    foreach (var hexagon in matchComboList[i])
-                    {
-                        if (hexagon == null) return;
+                        foreach (var hexagon in matchComboList[i])
+                        {
+                            if (hexagon == null) return;
 
-                        hexagon.DestroyHexagon(duration);
-                        hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
+                            hexagon.DestroyHexagon(duration);
+                            hexagonGrid[hexagon.IndexX, hexagon.IndexY] = null;
+                        }
                     }
                 }
             }
@@ -196,24 +194,11 @@ namespace Hexfall.Grid
             matchList.Clear();
         }
 
-        private List<HexagonColorType> CheckBombCandyInMatchList()
-        {
-            List<HexagonColorType> bombColorList = new List<HexagonColorType>();
-            foreach (var hexagon in matchList)
-            {
-                if (hexagon.HexagonType == HexagonType.Special && hexagon.HexagonSpecialType == HexagonSpecialType.Bomb)
-                {
-                    if (bombColorList.Contains(hexagon.HexagonColorType)) continue;
-                    bombColorList.Add(hexagon.HexagonColorType);
-                }
-            }
-
-            return bombColorList;
-        }
-
+        /* this is for bonus - bomb combo interaction. If bomb and bonus hex matches in same combo
+          then add all hexagon which is same bomb colour in match list  */
         private void CheckComboForBombInMatchList()
         {
-            var bombColorList = CheckBombCandyInMatchList();
+            var bombColorList = CheckBombColourInMatchList();
             if (bombColorList == null || bombColorList.Count <= 0) return;
 
             List<HexagonColorType> newComboColorList = new List<HexagonColorType>();
@@ -235,11 +220,26 @@ namespace Hexfall.Grid
 
             foreach (var color in newComboColorList)
             {
-                AddAllSameColorHexagonInMatchList(color);
+                AddAllSameColorHexInMatchList(color);
             }
         }
 
-        private void AddAllSameColorHexagonInMatchList(HexagonColorType hexagonColor)
+        private List<HexagonColorType> CheckBombColourInMatchList()
+        {
+            List<HexagonColorType> bombColorList = new List<HexagonColorType>();
+            foreach (var hexagon in matchList)
+            {
+                if (hexagon.HexagonType == HexagonType.Special && hexagon.HexagonSpecialType == HexagonSpecialType.Bomb)
+                {
+                    if (bombColorList.Contains(hexagon.HexagonColorType)) continue;
+                    bombColorList.Add(hexagon.HexagonColorType);
+                }
+            }
+
+            return bombColorList;
+        }
+
+        private void AddAllSameColorHexInMatchList(HexagonColorType hexagonColor)
         {
             foreach (var hexagon in hexagonGrid)
             {

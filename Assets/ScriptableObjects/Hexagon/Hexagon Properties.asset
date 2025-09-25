@@ -15,7 +15,7 @@ MonoBehaviour:
   defaultHexagonPrefab: {fileID: 4601287034773024166, guid: 7b7083d983572a64c98c074699103b3a, type: 3}
   bombHexagonPrefab: {fileID: 1652829034432219000, guid: d96d384c36aa4da43b94961183fbaa25, type: 3}
   moveDuration: 0.15
-  destroyDuration: 0.3
+  destroyDuration: 0.5
   defaultHexPossibility: 90
   bonusHexPossibility: 5
   specialHexPossibility: 5

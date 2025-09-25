@@ -14,7 +14,6 @@ namespace Hexfall.Grid
         private GridSpawner gridSpawner;
         private GridChecker gridChecker;
         private Hexagon[,] hexagonGrid;
-        private LevelProperties levelProperties;
         private HexagonProperties hexagonProperties;
         private PlayerHighlight playerHighlight;
         private CameraController cameraController;
@@ -33,7 +32,6 @@ namespace Hexfall.Grid
             this.gridSpawner = gridSpawner;
             this.levelManager = levelManager;
             this.gridChecker = gridChecker;
-            this.levelProperties = levelProperties;
             this.hexagonProperties = hexagonProperties;
             this.cameraController = cameraController;
 
