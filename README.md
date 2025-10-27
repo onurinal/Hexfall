@@ -1,4 +1,6 @@
 * Hexfall
 
-<img src="./HexfallGameplay.gif"/>
+| Infinite Level |
+| --------------- |
+<img src="./HexfallGameplay.gif" width="350"/>
 
